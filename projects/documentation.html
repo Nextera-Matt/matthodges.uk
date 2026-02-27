@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Documentation & Knowledge Transfer – Matt Hodges</title>
+  <meta name="description" content="Comprehensive technical documentation eliminating single points of failure across support platforms and infrastructure automation.">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="canonical" href="https://matthodges.uk/projects/documentation">
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Technical Documentation & Knowledge Transfer" />
+  <meta property="og:description" content="Eliminating single points of failure through distributed knowledge." />
+  <meta property="og:url" content="https://matthodges.uk/projects/documentation" />
+  <meta property="og:image" content="/images/og-card.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header id="header" class="scrolled">
+    <div class="container nav">
+      <a href="/" class="brand">
+        <div class="brand-icon">MH</div>
+        <span>Matt Hodges</span>
+      </a>
+      <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <nav id="nav">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/projects">Projects</a></li>
+          <li><a href="/cv">CV</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="project-hero fade-up">
+      <div class="hero-badge">Knowledge Distribution</div>
+      <h1>Documentation & Knowledge Transfer</h1>
+      <p class="lede">Every production system I built had the same risk: if I got hit by a bus, nobody could operate them. This project fixed that.</p>
+      <div class="tags" style="margin-top: 24px;">
+        <span class="tag">Confluence</span>
+        <span class="tag">Runbooks</span>
+        <span class="tag">API Docs</span>
+        <span class="tag">Code Comments</span>
+      </div>
+    </section>
+
+    <div class="project-content">
+      <section class="card fade-up">
+        <h2>The Problem</h2>
+        <p>Critical systems relied on a single person's knowledge. The Support Dashboard, Zabbix Automation, and VIP Alerting all worked well — but only one person knew how to deploy them, troubleshoot them, or modify their configuration. If that person was unavailable, the team was stuck.</p>
+        <p>The secondary risk: code without documentation becomes unmaintainable over time. New team members couldn't onboard without extended hand-holding.</p>
+      </section>
+
+      <section class="card fade-up">
+        <h2>What I Built</h2>
+        <p>Three layers of documentation, each serving a different audience:</p>
+
+        <h3>High-Level Guides (Confluence)</h3>
+        <p style="color: var(--text-dim);">For anyone who needs to understand what these systems are and how the pieces fit together. Five comprehensive articles covering architecture, data flows, and operational context.</p>
+
+        <h3>Operational Runbooks</h3>
+        <p style="color: var(--text-dim);">Step-by-step procedures for common tasks: deploying updates, handling failures, managing VIP lists, adjusting business hours. Written so the on-call engineer at 3 AM doesn't have to make panic decisions.</p>
+
+        <h3>Technical Reference (Code + API)</h3>
+        <p style="color: var(--text-dim);">25+ API endpoints documented with examples. Inline code comments explaining non-obvious decisions. README files for each module. Structured so engineers extending the system can find what they need without reading the entire codebase.</p>
+      </section>
+
+      <section class="card fade-up">
+        <h2>Results</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">Metric</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">Result</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border);">New team member onboarding</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border); color: var(--accent);">Weeks &rarr; days</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border);">API endpoints documented</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border); color: var(--accent);">25+ with request/response examples</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border);">Single point of failure</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border); color: var(--accent);">Eliminated — team operates independently</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px;">Confluence articles</td>
+            <td style="padding: 12px; color: var(--accent);">5 comprehensive guides</td>
+          </tr>
+        </table>
+      </section>
+
+      <section class="card fade-up">
+        <h2>Lessons Learned</h2>
+        <ul>
+          <li><strong>Docs in Git, not just Confluence.</strong> Documentation stored alongside code stays in sync. Confluence alone gets stale because nobody remembers to update it.</li>
+          <li><strong>Examples beat explanations.</strong> Five good code examples are worth 100 lines of prose. Show, don't tell.</li>
+          <li><strong>Old docs are worse than no docs.</strong> They're actively misleading. Built quarterly reviews into the process so the documentation stays accurate.</li>
+          <li><strong>Different audiences need different docs.</strong> The person deploying an update needs a different document than the person debugging a cache issue. Write both.</li>
+        </ul>
+      </section>
+
+      <section style="margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border);">
+        <a href="/projects" class="btn">&larr; Back to Projects</a>
+        <a href="/#contact" class="btn primary" style="margin-left: 12px;">Get in touch</a>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-left">
+        <span>&copy; <span id="year"></span> Matt Hodges</span>
+        <div class="footer-links">
+          <a href="https://github.com/NexteraMatt" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/matt-hodges-7b0642192/" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-right">Last updated: <time datetime="2026-02">Feb 2026</time></div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

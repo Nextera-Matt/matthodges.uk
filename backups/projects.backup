@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Projects – Matt Hodges</title>
+  <meta name="description" content="Personal, self-hosted infrastructure and automation projects. Includes Zabbix, Uptime Kuma, WireGuard UI, and code projects from my GitHub." />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="canonical" href="https://matthodges.uk/projects">
+  <style>
+    :root{ --bg:#0b0d11; --bg-elev:#11141a; --text:#e9edf3; --muted:#a8b0bd; --brand:#7aa2ff; --accent:#58d1b4; --radius:16px; --shadow:0 10px 30px rgba(0,0,0,.35); --maxw:1100px; }
+    @media (prefers-color-scheme: light){ :root{ --bg:#fff; --bg-elev:#f7f9fc; --text:#0b0d11; --muted:#5c6470; --shadow:0 8px 24px rgba(0,0,0,.08);} }
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0; font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto; color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 10% -10%, rgba(90,120,255,.12), transparent 35%),
+        radial-gradient(900px 600px at 120% 10%, rgba(90,220,190,.10), transparent 30%),
+        var(--bg);
+      overflow-x:hidden;
+    }
+    .container{ max-width:var(--maxw); margin:0 auto; padding:0 20px; }
+
+    /* Header / nav (match Services) */
+    header{ position:sticky; top:0; z-index:50; background: color-mix(in oklab, var(--bg), transparent 10%); backdrop-filter: blur(10px); border-bottom:1px solid color-mix(in oklab, var(--text), transparent 90%); }
+    .nav{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 0; }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight:600; }
+    .dot{ width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg,var(--brand),var(--accent)); box-shadow:0 0 18px rgba(122,162,255,.5); }
+    nav ul{ display:flex; gap:14px; list-style:none; margin:0; padding:0; flex-wrap:wrap; }
+    nav a{
+      display:inline-block; padding:8px 12px; border-radius:999px; color:var(--muted);
+      border:1px solid transparent; text-decoration:none; white-space:nowrap; transition:all .2s ease;
+    }
+    nav a:hover, nav a:focus-visible{
+      color:var(--text);
+      border-color: color-mix(in oklab, var(--text), transparent 85%);
+      background: color-mix(in oklab, var(--bg-elev), transparent 15%);
+      outline:none;
+    }
+
+    /* Pill buttons (used for CTAs and navbar CV PDF) */
+    .btn{
+      display:inline-flex; align-items:center; gap:10px; padding:10px 16px; border-radius:999px;
+      border:1px solid color-mix(in oklab, var(--text), transparent 85%);
+      background: linear-gradient(180deg, color-mix(in oklab, var(--bg-elev), transparent 10%), color-mix(in oklab, var(--bg), transparent 0%));
+      text-decoration:none; color:var(--muted); transition:transform .15s ease, box-shadow .15s ease, color .15s ease;
+    }
+    .btn:hover, .btn:focus-visible{ color:var(--text); transform: translateY(-1px); box-shadow: 0 12px 28px rgba(0,0,0,.2); outline:none; }
+    .btn.primary{ background:linear-gradient(135deg,var(--brand),var(--accent)); color:#081018; border:none; }
+
+    .hero{ padding:56px 0 16px; }
+    h1{ font-size:clamp(26px,5vw,40px); margin:0 0 8px; }
+    .lede{ color:var(--muted); max-width:65ch; }
+    .banner{ margin:12px 0 26px; padding:12px 14px; border:1px dashed color-mix(in oklab, var(--text), transparent 80%); background: color-mix(in oklab, var(--bg-elev), transparent 10%); border-radius:14px; font-size:14px; color:var(--muted); }
+
+    .grid{ display:grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap:18px; }
+    .card{ grid-column: span 12; background: color-mix(in oklab, var(--bg-elev), transparent 0%); border:1px solid color-mix(in oklab, var(--text), transparent 90%); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+    .thumb{ display:block; width:100%; height:auto; aspect-ratio:16/9; object-fit:cover; }
+    .card-body{ padding:16px; display:grid; gap:10px; }
+    .card h3{ margin:0; font-size:clamp(18px,2.5vw,22px); }
+    .card p{ margin:0; color:var(--muted); }
+    .meta{ display:flex; gap:8px; flex-wrap:wrap; }
+    .badge{ display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid color-mix(in oklab, var(--text), transparent 85%); background: color-mix(in oklab, var(--bg-elev), transparent 15%); font-size:12px; color:var(--muted); }
+
+    .section-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:24px 0 12px; }
+    .section-head h2{ margin:0; font-size: clamp(20px,2.6vw,28px); }
+    @media (min-width:720px){ .md-6{ grid-column: span 6; } }
+    @media (min-width:1024px){ .lg-4{ grid-column: span 4; } }
+
+    footer{ margin-top:40px; padding:32px 0 60px; border-top:1px solid color-mix(in oklab, var(--text), transparent 90%); color:var(--muted); }
+    .footer-grid{ display:grid; gap:14px; }
+    @media (min-width:720px){ .footer-grid{ grid-template-columns:1fr auto; align-items:center; } }
+    footer a{ color:var(--muted); text-decoration:none; border-bottom:1px dotted color-mix(in oklab, var(--text), transparent 80%); }
+    footer a:hover{ color:var(--text); border-bottom-color:var(--brand); }
+
+    @media (prefers-reduced-motion: no-preference){
+      .reveal{ opacity:0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
+      .reveal.in{ opacity:1; transform:none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav" role="navigation" aria-label="Primary">
+      <div class="brand"><span class="dot" aria-hidden="true"></span> Matt Hodges</div>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/services">Services</a></li>
+          <li><a aria-current="page">Projects</a></li>
+          <li><a href="/cv">CV</a></li>
+          <li><a href="/#contact">Contact</a></li>
+          <li><a class="btn primary" href="/files/Matt_Hodges_CV.pdf" target="_blank" rel="noopener">CV (PDF)</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1 class="reveal">Projects</h1>
+      <p class="lede reveal">A mix of <strong>personal, self-hosted</strong> infrastructure and small utilities/automations I’ve built and documented.</p>
+      <div class="banner reveal">Everything here is run and maintained by me — from monitoring stacks to VPN and hosting.</div>
+    </section>
+
+    <!-- Self-hosted Infrastructure -->
+    <section aria-labelledby="selfhosted">
+      <div class="section-head">
+        <h2 id="selfhosted">Self-hosted Infrastructure</h2>
+        <p class="lede" style="margin:0;color:var(--muted);">Screenshots + short write-ups</p>
+      </div>
+      <div class="grid">
+        <article class="card md-6 lg-4 reveal">
+          <img class="thumb" src="/images/projects/zabbix_dashboard.png" alt="Zabbix dashboard overview">
+          <div class="card-body">
+            <h3>Zabbix Monitoring</h3>
+            <p>Host & service monitoring with tuned triggers, dashboards, and notifications.</p>
+            <div class="meta"><span class="badge">Self-hosted</span><span class="badge">Zabbix</span></div>
+            <a class="btn primary" href="/projects/zabbix">Read details</a>
+          </div>
+        </article>
+
+        <article class="card md-6 lg-4 reveal">
+          <img class="thumb" src="/images/projects/uptime_kuma.png" alt="Uptime Kuma dashboard">
+          <div class="card-body">
+            <h3>Uptime Kuma</h3>
+            <p>External uptime & response monitoring with status pages.</p>
+            <div class="meta"><span class="badge">Self-hosted</span><span class="badge">Uptime Kuma</span></div>
+            <a class="btn primary" href="/projects/uptime-kuma">Read details</a>
+          </div>
+        </article>
+
+        <article class="card md-6 lg-4 reveal">
+          <img class="thumb" src="/images/projects/wireguard_ui.png" alt="WireGuard UI">
+          <div class="card-body">
+            <h3>WireGuard VPN</h3>
+            <p>WireGuard server with a web UI to manage peers and configs.</p>
+            <div class="meta"><span class="badge">Self-hosted</span><span class="badge">WireGuard</span></div>
+            <a class="btn primary" href="/projects/wireguard">Read details</a>
+          </div>
+        </article>
+
+        <article class="card md-6 lg-4 reveal">
+          <img class="thumb" src="/images/projects/cpanel_hosting.png" alt="cPanel/WHM hosting">
+          <div class="card-body">
+            <h3>Self-Hosted cPanel</h3>
+            <p>My own cPanel/WHM server powering this site & lab projects.</p>
+            <div class="meta"><span class="badge">Self-hosted</span><span class="badge">cPanel</span></div>
+            <a class="btn primary" href="/projects/cpanel-hosting">Read details</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- GitHub Code Projects -->
+    <section aria-labelledby="code" style="margin-top:18px;">
+      <div class="section-head">
+        <h2 id="code">Code & Automations (from my GitHub)</h2>
+        <p class="lede" style="margin:0;color:var(--muted);">The original projects already on this site</p>
+      </div>
+      <div class="grid">
+        <article class="card md-6 lg-4 reveal">
+          <img class="thumb" src="/images/projects/pingdom_zabbix_thumb.jpg" alt="Pingdom to Zabbix integration" />
+          <div class="card-body">
+            <h3>Pingdom → Zabbix</h3>
+            <p>Feed external uptime signals into Zabbix for a single source of truth.</p>
+            <div class="meta"><span class="badge">Automation</span></div>
+            <a class="btn primary" href="/projects/pingdom-zabbix">Read details</a>
+          </div>
+        </article>
+
+        <article class="card md-6 lg-4 reveal">
+          <img class="thumb" src="/images/projects/iptables_thumb.jpg" alt="iptables rules helper" />
+          <div class="card-body">
+            <h3>iptables helper</h3>
+            <p>Safer firewall changes with clear diff/rollback steps.</p>
+            <div class="meta"><span class="badge">Shell</span></div>
+            <a class="btn primary" href="/projects/iptables">Read details</a>
+          </div>
+        </article>
+
+        <article class="card md-6 lg-4 reveal">
+          <img class="thumb" src="/images/projects/ip_lookup_thumb.jpg" alt="IP lookup utility" />
+          <div class="card-body">
+            <h3>IP Lookup</h3>
+            <p>Small utility for getting ASN/geo details while debugging.</p>
+            <div class="meta"><span class="badge">Utility</span></div>
+            <a class="btn primary" href="/projects/ip-lookup">Read details</a>
+          </div>
+        </article>
+
+        <article class="card md-6 lg-4 reveal">
+          <img class="thumb" src="/images/projects/cpanel_migration_thumb.jpg" alt="cPanel migration automation" />
+          <div class="card-body">
+            <h3>cPanel migration</h3>
+            <p>Predictable account moves with logs and rollback steps.</p>
+            <div class="meta"><span class="badge">Automation</span></div>
+            <a class="btn primary" href="/projects/cpanel-migration">Read details</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>© <span id="year"></span> Matt Hodges • <a href="https://github.com/NexteraMatt" target="_blank" rel="noopener">GitHub</a> • <a href="https://www.linkedin.com/in/matt-hodges-7b0642192/" target="_blank" rel="noopener">LinkedIn</a></div>
+      <div><a href="/#contact" class="btn">Contact</a></div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches){
+      const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }), {threshold:.06});
+      document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    }
+  </script>
+</body>
+</html>

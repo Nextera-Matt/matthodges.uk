@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VIP Alerting & OOH Reporting – Matt Hodges</title>
+  <meta name="description" content="24/7 automated escalation system for critical clients with VictorOps integration and comprehensive out-of-hours reporting.">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="canonical" href="https://matthodges.uk/projects/vip-alerting">
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="VIP Alerting & Out-of-Hours Reporting System" />
+  <meta property="og:description" content="Automated escalation ensuring 24/7 coverage for critical clients." />
+  <meta property="og:url" content="https://matthodges.uk/projects/vip-alerting" />
+  <meta property="og:image" content="/images/og-card.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header id="header" class="scrolled">
+    <div class="container nav">
+      <a href="/" class="brand">
+        <div class="brand-icon">MH</div>
+        <span>Matt Hodges</span>
+      </a>
+      <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <nav id="nav">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/services">Services</a></li>
+          <li><a href="/projects">Projects</a></li>
+          <li><a href="/cv">CV</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="project-hero fade-up">
+      <div class="hero-badge">Production System • Active Integration</div>
+      <h1>VIP Alerting & OOH Reporting</h1>
+      <p class="lede">Automated critical client detection and escalation system providing 24/7 coverage via VictorOps, capturing all VIP tickets outside business hours with instant alerting and comprehensive reporting.</p>
+      <div class="tags" style="margin-top: 24px;">
+        <span class="tag">VictorOps API</span>
+        <span class="tag">Webhooks</span>
+        <span class="tag">Automation</span>
+        <span class="tag">Reporting</span>
+        <span class="tag">RBAC</span>
+      </div>
+    </section>
+
+    <div class="project-content">
+      <section class="card fade-up">
+        <h2>The Problem</h2>
+        <p>The team had no automated way to identify and escalate critical client (VIP) tickets arriving outside business hours. This created several operational risks:</p>
+        <ul>
+          <li>Manual ticket identification relied on engineers remembering which clients were "critical"</li>
+          <li>Critical tickets arriving OOH (8PM-6AM weekdays, weekends) could be missed if the on-call engineer wasn't actively monitoring</li>
+          <li>No reliable escalation path—VIP clients weren't automatically flagged for immediate attention</li>
+          <li>Management had no visibility into OOH support activity or VIP callout patterns</li>
+          <li>No way to temporarily snooze or adjust VIP lists without code changes</li>
+        </ul>
+        <p>The solution was manual and fragile: engineers had to remember who was VIP, and escalation depended on individual attention and diligence.</p>
+      </section>
+
+      <section class="card fade-up">
+        <h2>The Solution</h2>
+        <p>Built an automated VIP detection and escalation system integrated with VictorOps for reliable 24/7 on-call coverage:</p>
+        
+        <h3>Core Features</h3>
+        <ul>
+          <li><strong>Automated VIP Detection:</strong> Real-time identification of critical client tickets as they arrive, with visual highlighting in the support dashboard</li>
+          <li><strong>VictorOps Integration:</strong> Real-time webhook integration sends instant alerting to on-call engineer when VIP tickets arrive OOH</li>
+          <li><strong>Intelligent De-Duplication:</strong> Prevents alert fatigue by consolidating multiple alerts from the same VIP client within a time window</li>
+          <li><strong>Time-Aware Escalation:</strong> Automatic callouts only during configured OOH windows (8PM-6AM weekdays, all-day weekends)</li>
+          <li><strong>Smart Skip Patterns:</strong> Respects configured holidays and team schedules to avoid false alarms</li>
+        </ul>
+
+        <h3>Configuration & Control</h3>
+        <ul>
+          <li><strong>Runtime Admin Interface:</strong> Manage VIP client lists, business hours, skip patterns without requiring code changes</li>
+          <li><strong>Temporary Snooze:</strong> Temporarily disable escalation for scheduled maintenance or known issues</li>
+          <li><strong>Audit Trail:</strong> Complete logging of all configuration changes and escalations for compliance</li>
+          <li><strong>Role-Based Access:</strong> Only managers can modify VIP configuration; engineers see read-only view</li>
+        </ul>
+
+        <h3>Reporting & Analytics</h3>
+        <ul>
+          <li><strong>OOH Analysis Dashboard:</strong> Manager-facing dashboard showing OOH ticket trends, VIP callout frequency, response times</li>
+          <li><strong>Weekend Activity Summaries:</strong> Automated reports showing all VIP activity by weekend</li>
+          <li><strong>Callout History:</strong> Complete audit trail of all escalations with timestamps and outcomes</li>
+          <li><strong>Capacity Planning Data:</strong> Visibility into OOH support load for resource allocation decisions</li>
+        </ul>
+      </section>
+
+      <section class="card fade-up">
+        <h2>Key Achievements</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">Metric</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border); font-weight: 600;">Result</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border);">VIP Clients Monitored</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border); color: var(--accent);">19 critical accounts</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border);">OOH Callouts/Week</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border); color: var(--accent);">5-10 incidents caught & escalated</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border);">Escalation Latency</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border); color: var(--accent);">Real-time (webhook on ticket creation)</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border);">False Alarm Rate</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border); color: var(--accent);">Near-zero (intelligent de-duplication)</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border);">Configuration Changes</td>
+            <td style="padding: 12px; border-bottom: 1px solid var(--border); color: var(--accent);">Runtime updates (zero downtime)</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px;">Status</td>
+            <td style="padding: 12px; color: var(--accent);">Production, actively relied upon</td>
+          </tr>
+        </table>
+      </section>
+
+      <section class="card fade-up">
+        <h2>Technical Approach</h2>
+        
+        <h3>Architecture</h3>
+        <ul>
+          <li><strong>Event-Driven:</strong> System listens for new ticket events from all 3 ticketing systems</li>
+          <li><strong>VIP Matching:</strong> Real-time lookup against configured VIP client list (loaded from SQLite config DB)</li>
+          <li><strong>VictorOps Webhook:</strong> Instant escalation to on-call engineering team</li>
+          <li><strong>De-Duplication Logic:</strong> Time-window based consolidation prevents spam alerting</li>
+          <li><strong>Audit Logging:</strong> All escalations, configuration changes, and skips logged to persistent storage</li>
+        </ul>
+
+        <h3>Reliability & Safety</h3>
+        <ul>
+          <li><strong>Fail-Safe:</strong> If VictorOps API is unavailable, system falls back to secondary notification channel</li>
+          <li><strong>Idempotent Escalation:</strong> Duplicate events don't result in multiple callouts</li>
+          <li><strong>Configuration Validation:</strong> Admin changes validated before taking effect</li>
+          <li><strong>Time-Zone Aware:</strong> OOH windows correctly calculated across time zones</li>
+        </ul>
+
+        <h3>Integration Points</h3>
+        <ul>
+          <li>ICS Ubersmith webhook listener</li>
+          <li>VPS.net Ubersmith webhook listener</li>
+          <li>Zoho Desk webhook listener</li>
+          <li>VictorOps API for escalation</li>
+          <li>SQLite database for configuration and audit log</li>
+        </ul>
+      </section>
+
+      <section class="card fade-up">
+        <h2>Business Impact</h2>
+        <ul>
+          <li><strong>24/7 Coverage:</strong> Critical clients now have guaranteed escalation path OOH. 5-10 callouts per week demonstrates system is catching real incidents that would have been missed.</li>
+          <li><strong>Zero Manual Steps:</strong> Removed reliance on engineer memory and manual escalation. System is source of truth.</li>
+          <li><strong>Operational Continuity:</strong> On-call engineer knows immediately when a VIP issue arrives, enabling rapid response.</li>
+          <li><strong>Management Visibility:</strong> For the first time, leadership has data on OOH support patterns, allowing capacity planning and SLA validation.</li>
+          <li><strong>Flexibility:</strong> Runtime configuration means VIP lists can change instantly without deploying code—critical for business changes.</li>
+          <li><strong>Audit & Compliance:</strong> Complete escalation trail provides evidence of SLA adherence for critical clients.</li>
+        </ul>
+      </section>
+
+      <section class="card fade-up">
+        <h2>Real-World Impact</h2>
+        <p>The system captures <strong>all VIP tickets arriving outside business hours</strong> and instantly escalates them. The 5-10 OOH callouts per week show this isn't theoretical—it's actively preventing critical issues from being missed.</p>
+        <p>Without this system, a VIP ticket arriving at 11 PM on a Friday might not get noticed until Monday morning. Now it triggers an immediate on-call callout.</p>
+      </section>
+
+      <section class="card fade-up">
+        <h2>Lessons Learned</h2>
+        <ul>
+          <li><strong>De-Duplication is Hard:</strong> Initial approach was too aggressive (consolidated too many alerts). Found the right balance through operational feedback.</li>
+          <li><strong>Time Zones Matter:</strong> "OOH" is different for every geography. Had to build time-zone aware business hour logic.</li>
+          <li><strong>Escalation Fatigue:</strong> Too many alerts and on-call engineers ignore them. De-duplication and smart filtering are critical.</li>
+          <li><strong>Configuration as Code Limits:</strong> Hardcoding VIP lists in code creates friction. Self-service admin interface eliminated this bottleneck.</li>
+        </ul>
+      </section>
+
+      <section style="margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border);">
+        <a href="/projects" class="btn">← Back to Projects</a>
+        <a href="/#contact" class="btn primary" style="margin-left: 12px;">Need reliable escalation?</a>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-left">
+        <span>© <span id="year"></span> Matt Hodges</span>
+        <div class="footer-links">
+          <a href="https://github.com/NexteraMatt" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/matt-hodges-7b0642192/" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-right">Last updated: <time datetime="2026-02">Feb 2026</time></div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

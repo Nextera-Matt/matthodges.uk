@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Matt Hodges – Cloud & Infrastructure Engineer</title>
+  <meta name="description" content="Cloud & Infrastructure Engineer specialising in Linux, automation, and monitoring. Projects include Pingdom→Zabbix integration, iptables tooling, IP lookup, and cPanel migrations." />
+  <meta name="author" content="Matt Hodges" />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="canonical" href="https://matthodges.uk/">
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Matt Hodges – Cloud & Infrastructure Engineer" />
+  <meta property="og:description" content="Linux hosting, automation, monitoring. View projects, services, and contact Matt." />
+  <meta property="og:url" content="https://matthodges.uk/" />
+  <meta property="og:image" content="/images/og-card.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <style>
+    /* ===== Design tokens ===== */
+    :root{
+      --bg:#0b0d11; --bg-elev:#11141a; --text:#e9edf3; --muted:#a8b0bd;
+      --brand:#7aa2ff; --accent:#58d1b4; --danger:#ff6b6b;
+      --radius:16px; --shadow:0 10px 30px rgba(0,0,0,.35); --maxw:1100px;
+      --ring: color-mix(in oklab, var(--brand), transparent 30%);
+    }
+    @media (prefers-color-scheme: light){ :root{ --bg:#fff; --bg-elev:#f7f9fc; --text:#0b0d11; --muted:#5c6470; --shadow:0 8px 24px rgba(0,0,0,.08);} }
+
+    /* ===== Base ===== */
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0; font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 10% -10%, rgba(90,120,255,.12), transparent 35%),
+        radial-gradient(900px 600px at 120% 10%, rgba(90,220,190,.10), transparent 30%),
+        var(--bg);
+      overflow-x:hidden;
+    }
+    a{ color:inherit; text-underline-offset:.2em; }
+    img{ max-width:100%; height:auto; }
+    .container{ max-width:var(--maxw); margin:0 auto; padding:0 20px; }
+    .visually-hidden{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+
+    /* ===== Header ===== */
+    header{ position:sticky; top:0; z-index:50; background: color-mix(in oklab, var(--bg), transparent 10%); backdrop-filter: blur(10px); border-bottom:1px solid color-mix(in oklab, var(--text), transparent 90%); }
+    .nav{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 0; }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight:600; letter-spacing:.3px; }
+    .brand-badge{ width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg,var(--brand),var(--accent)); box-shadow:0 0 18px color-mix(in oklab, var(--brand), transparent 50%); }
+    nav ul{ display:flex; gap:14px; list-style:none; margin:0; padding:0; flex-wrap:wrap; }
+    nav a{ display:inline-block; padding:8px 12px; border-radius:999px; text-decoration:none; color:var(--muted); border:1px solid transparent; white-space:nowrap; }
+    nav a:hover, nav a:focus-visible{ color:var(--text); border-color: color-mix(in oklab, var(--text), transparent 85%); background: color-mix(in oklab, var(--bg-elev), transparent 15%); outline:none; }
+
+    /* ===== Hero ===== */
+    .hero{ padding:72px 0 36px; display:grid; gap:16px; }
+    .hero h1{ font-size: clamp(28px, 5vw, 44px); line-height:1.2; margin:0; }
+    .eyebrow{ display:inline-flex; align-items:center; gap:8px; font-size:14px; color:var(--muted); background: color-mix(in oklab, var(--bg-elev), transparent 20%); padding:6px 10px; border-radius:999px; border:1px solid color-mix(in oklab, var(--text), transparent 88%); width:max-content; }
+    .lede{ font-size: clamp(16px, 2.2vw, 20px); color:var(--muted); max-width:65ch; margin:6px 0 10px; }
+    .cta-row{ display:flex; flex-wrap:wrap; gap:10px; }
+
+    .btn{ display:inline-flex; align-items:center; gap:10px; padding:10px 16px; border-radius:999px; border:1px solid color-mix(in oklab, var(--text), transparent 85%); background: linear-gradient(180deg, color-mix(in oklab, var(--bg-elev), transparent 10%), color-mix(in oklab, var(--bg), transparent 0%)); text-decoration:none; }
+    .btn.primary{ background: linear-gradient(135deg, var(--brand), var(--accent)); color:#081018; border:none; box-shadow:var(--shadow); }
+    .btn:hover, .btn:focus-visible{ transform: translateY(-1px); box-shadow: 0 12px 28px rgba(0,0,0,.2); outline:none; }
+
+    /* ===== Sections & cards ===== */
+    section{ padding:48px 0; }
+    .section-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:18px; }
+    .section-head h2{ font-size: clamp(20px, 2.6vw, 28px); margin:0; }
+    .section-head p{ color:var(--muted); margin:0; }
+
+    .grid{ display:grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap:18px; }
+    .card{ grid-column: span 12; background: color-mix(in oklab, var(--bg-elev), transparent 0%); border: 1px solid color-mix(in oklab, var(--text), transparent 90%); border-radius: var(--radius); padding:18px; box-shadow: var(--shadow); }
+    .card:hover{ border-color: color-mix(in oklab, var(--text), transparent 80%); }
+    @media (min-width: 720px){ .card.xs-6{ grid-column: span 6; } }
+    @media (min-width: 1024px){ .card.md-4{ grid-column: span 4; } }
+
+    .stack{ display:flex; flex-wrap:wrap; gap:8px; }
+    .tag{ font-size:12px; color:var(--muted); padding:6px 10px; border-radius:999px; border:1px solid color-mix(in oklab, var(--text), transparent 85%); background: color-mix(in oklab, var(--bg-elev), transparent 15%); }
+
+    .proj-title{ display:flex; justify-content:space-between; gap:12px; align-items:center; }
+    .proj-title h3{ margin:0; font-size:18px; }
+    .proj-actions{ display:flex; gap:8px; }
+    .proj-actions a{ font-size:14px; text-decoration:none; color:var(--text); padding:6px 10px; border-radius:999px; border:1px solid color-mix(in oklab, var(--text), transparent 85%); }
+    .proj-actions a:hover{ background: color-mix(in oklab, var(--bg-elev), transparent 15%); }
+
+    /* ===== Forms (contact) ===== */
+    form{ display:grid; gap:12px; max-width:680px; }
+    label{ font-size:14px; color:var(--muted); }
+    input, textarea{ width:100%; padding:12px 14px; border-radius:12px; border:1px solid color-mix(in oklab, var(--text), transparent 85%); background: color-mix(in oklab, var(--bg-elev), transparent 5%); color:var(--text); }
+    input:focus-visible, textarea:focus-visible{ outline:2px solid var(--ring); border-color: transparent; }
+    .form-row{ display:grid; gap:12px; }
+    @media (min-width:720px){ .form-row{ grid-template-columns:1fr 1fr; } }
+    .form-note{ font-size:13px; color:var(--muted); }
+    .status{ display:none; padding:10px 12px; border-radius:10px; border:1px solid; }
+    .status.ok{ display:block; border-color: color-mix(in oklab, var(--accent), transparent 40%); background: color-mix(in oklab, var(--accent), transparent 85%); }
+    .status.err{ display:block; border-color: color-mix(in oklab, var(--danger), transparent 30%); background: color-mix(in oklab, var(--danger), transparent 90%); }
+
+    /* ===== Animations ===== */
+    @media (prefers-reduced-motion: no-preference){
+      .reveal{ opacity:0; transform: translateY(10px); transition: opacity .5s ease-out, transform .5s ease-out; }
+      .reveal.in{ opacity:1; transform: none; }
+      .brand-badge{ animation: pulse 2s ease-in-out infinite; }
+      @keyframes pulse{ 0%,100%{ box-shadow:0 0 18px color-mix(in oklab, var(--brand), transparent 50%);} 50%{ box-shadow:0 0 28px color-mix(in oklab, var(--accent), transparent 40%);} }
+      .scroll-indicator{ animation: bounce 2s ease-in-out infinite; }
+      @keyframes bounce{ 0%,100%{ transform: translateY(0); opacity:.7;} 50%{ transform: translateY(6px); opacity:1;} }
+    }
+
+    /* ===== Footer ===== */
+    footer{ margin-top:40px; padding:32px 0 60px; border-top:1px solid color-mix(in oklab, var(--text), transparent 90%); color:var(--muted); }
+    .footer-grid{ display:grid; gap:14px; }
+    @media (min-width:720px){ .footer-grid{ grid-template-columns:1fr auto; align-items:center; } }
+
+    /* Mobile tweaks */
+    @media (max-width:420px){ .hero{ padding:56px 0 40px; } nav ul{ gap:8px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav" role="navigation" aria-label="Primary">
+      <div class="brand"><span class="brand-badge" aria-hidden="true"></span> Matt Hodges</div>
+      <nav>
+        <ul>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="/services">Services</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="/cv">CV</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a class="btn" href="/files/Matt_Hodges_CV.pdf" rel="noopener" target="_blank">CV (PDF)</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="intro-title">
+      <p class="eyebrow">Cloud Services • Linux • Automation • Monitoring</p>
+      <h1 id="intro-title">Cloud & Infrastructure Engineer</h1>
+      <p class="lede">I help teams stabilise and automate Linux hosting at scale. Recent work: Pingdom→Zabbix integration, safer iptables updates, fast IP lookup tooling, and low‑downtime cPanel migrations.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="#contact">Book a chat</a>
+        <a class="btn" href="#projects">Explore projects</a>
+      </div>
+      <a class="scroll-indicator" href="#projects" aria-label="Scroll to projects" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:999px;border:1px solid color-mix(in oklab, var(--text), transparent 85%);margin-top:10px;text-decoration:none">↓</a>
+    </section>
+
+    <!-- Quick highlights (optional trust row) -->
+    <section aria-labelledby="highlights-title">
+      <div class="section-head">
+        <h2 id="highlights-title">What I focus on</h2>
+        <p>Clear outcomes over buzzwords.</p>
+      </div>
+      <div class="grid">
+        <article class="card xs-6 md-4 reveal"><h3>Reliability</h3><p>Reduce incident noise and surprises with better monitoring and runbooks.</p></article>
+        <article class="card xs-6 md-4 reveal"><h3>Automation</h3><p>Remove toil with scripts and Ansible where it actually pays off.</p></article>
+        <article class="card xs-6 md-4 reveal"><h3>Pragmatism</h3><p>Simple, auditable changes that teams can own and maintain.</p></article>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" aria-labelledby="projects-title">
+      <div class="section-head">
+        <h2 id="projects-title">Featured projects</h2>
+        <p>Automation, monitoring, and tooling that reflect my current work.</p>
+      </div>
+      <div class="grid">
+        <!-- Pingdom to Zabbix -->
+        <article class="card xs-6 md-4 reveal" aria-labelledby="proj-pingdom">
+          <div class="proj-title">
+            <h3 id="proj-pingdom">Pingdom to Zabbix</h3>
+            <div class="proj-actions" aria-label="Project links">
+              <a href="/projects/pingdom-zabbix" rel="noopener">Details</a>
+            </div>
+          </div>
+          <p>Automates integration of Pingdom checks into Zabbix for a single source of truth on uptime and infrastructure health.</p>
+          <div class="stack">
+            <span class="tag">Python</span>
+            <span class="tag">Zabbix API</span>
+            <span class="tag">Pingdom API</span>
+          </div>
+        </article>
+
+        <!-- iptables-management-script -->
+        <article class="card xs-6 md-4 reveal" aria-labelledby="proj-iptables">
+          <div class="proj-title">
+            <h3 id="proj-iptables">iptables-management-script</h3>
+            <div class="proj-actions" aria-label="Project links">
+              <a href="/projects/iptables" rel="noopener">Details</a>
+            </div>
+          </div>
+          <p>Simplifies managing iptables rules with safe toggles and backups to prevent lockouts across servers.</p>
+          <div class="stack">
+            <span class="tag">Bash</span>
+            <span class="tag">Linux</span>
+            <span class="tag">Firewall</span>
+          </div>
+        </article>
+
+        <!-- ip-lookup -->
+        <article class="card xs-6 md-4 reveal" aria-labelledby="proj-iplookup">
+          <div class="proj-title">
+            <h3 id="proj-iplookup">ip-lookup</h3>
+            <div class="proj-actions" aria-label="Project links">
+              <a href="/projects/ip-lookup" rel="noopener">Details</a>
+            </div>
+          </div>
+          <p>Quick IP address lookups with geolocation and DNS records—handy for fast triage and troubleshooting.</p>
+          <div class="stack">
+            <span class="tag">Node.js</span>
+            <span class="tag">APIs</span>
+          </div>
+        </article>
+
+        <!-- cPanel Migration Tool -->
+        <article class="card xs-6 md-4 reveal" aria-labelledby="proj-cpanel">
+          <div class="proj-title">
+            <h3 id="proj-cpanel">cPanel Migration Tool</h3>
+            <div class="proj-actions" aria-label="Project links">
+              <a href="/projects/cpanel-migration" rel="noopener">Details</a>
+            </div>
+          </div>
+          <p>Automates account transfers with minimal downtime and clear logs for auditing.</p>
+          <div class="stack">
+            <span class="tag">cPanel API</span>
+            <span class="tag">Bash</span>
+            <span class="tag">SSH</span>
+          </div>
+        </article>
+      </div>
+      <p class="form-note" style="margin-top:12px">Want to see more? <a href="/projects">View all projects</a>.</p>
+    </section>
+
+    <!-- Services CTA (placeholder until services page is built) -->
+    <section aria-labelledby="services-cta-title">
+      <div class="section-head">
+        <h2 id="services-cta-title">Need help with hosting, email, or migrations?</h2>
+        <p>See everything I offer, with clear outcomes and no fluff.</p>
+      </div>
+      <div class="grid">
+        <article class="card reveal" aria-labelledby="svc-cta">
+          <h3 id="svc-cta">Services</h3>
+          <p>Linux hosting, automation, monitoring, domains, and migration support—all in one place.</p>
+          <p><a class="btn primary" href="/services">View services</a> <a class="btn" href="#contact">Contact</a></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" aria-labelledby="about-title">
+      <div class="section-head">
+        <h2 id="about-title">About</h2>
+        <p>Cloud & Infrastructure Operations Engineer.</p>
+      </div>
+      <div class="grid">
+        <article class="card reveal">
+          <p>I’m a Cloud & Infrastructure Operations Engineer with 5+ years of experience managing and automating hosting infrastructure across bare metal, VPS, and cloud. Day to day I deliver L3 support, maintain Linux systems, automate with Ansible and StackStorm, troubleshoot networking & firewalls, and collaborate with global teams to meet SLAs.</p>
+          <div class="stack">
+            <span class="tag">Linux</span><span class="tag">Ansible</span><span class="tag">StackStorm</span><span class="tag">Zabbix</span><span class="tag">cPanel</span><span class="tag">Networking</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" aria-labelledby="contact-title">
+      <div class="section-head">
+        <h2 id="contact-title">Contact</h2>
+        <p>Tell me about your infrastructure goals.</p>
+      </div>
+      <form id="contact-form" method="post" action="/contact.php" novalidate>
+        <div class="form-row">
+          <div>
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+          </div>
+        </div>
+        <div>
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="6" required></textarea>
+        </div>
+        <!-- Honeypot -->
+        <div class="visually-hidden" aria-hidden="true">
+          <label for="website">Leave this field empty</label>
+          <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+        <p class="form-note">Your details are only used to reply and are never shared.</p>
+        <div class="status" id="form-status" role="status" aria-live="polite"></div>
+        <button class="btn primary" type="submit">Send message</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>© <span id="year"></span> Matt Hodges • <a href="https://github.com/NexteraMatt" rel="me noopener" target="_blank">GitHub</a> • <a href="https://www.linkedin.com/in/matt-hodges-7b0642192/" rel="me noopener" target="_blank">LinkedIn</a></div> 
+      <div>Last updated: <time datetime="2025-09-23">23 Sep 2025</time></div>
+    </div>
+  </footer>
+
+  <script>
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Reveal-on-scroll (gentle; respects reduced motion)
+    if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches){
+      const els = [
+        ...document.querySelectorAll('.card'),
+        ...document.querySelectorAll('.section-head'),
+        ...document.querySelectorAll('.hero h1, .hero .lede, .hero .cta-row')
+      ];
+      els.forEach(el => el.classList?.add('reveal'));
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
+      els.forEach(el => io.observe(el));
+    }
+
+    // Simple inline validation + AJAX for the contact form
+    const form = document.getElementById('contact-form');
+    const statusEl = document.getElementById('form-status');
+
+    function setStatus(type, msg){
+      statusEl.className = 'status ' + (type === 'ok' ? 'ok' : 'err');
+      statusEl.textContent = msg;
+    }
+
+    form?.addEventListener('submit', async (e) => {
+      const honey = form.querySelector('#website');
+      if(honey?.value){ e.preventDefault(); return; }
+      if(!form.checkValidity()){
+        e.preventDefault();
+        setStatus('err', 'Please complete all required fields.');
+        form.querySelector(':invalid')?.focus();
+        return;
+      }
+      e.preventDefault();
+      try {
+        const formData = new FormData(form);
+        const res = await fetch(form.action, { method:'POST', body: formData, headers: { 'Accept': 'application/json' } });
+        if(res.ok){
+          let data = null; try{ data = await res.json(); } catch{}
+          setStatus('ok', (data && data.message) || "Thanks! I'll get back to you shortly.");
+          form.reset();
+        } else {
+          let data = null; try{ data = await res.json(); } catch{}
+          setStatus('err', (data && data.message) || 'Something went wrong. Please email contact@matthodges.uk.');
+        }
+      } catch(err){
+        setStatus('err', 'Network error—please try again or email me directly.');
+      }
+    });
+      // Scroll-reactive parallax background (lightweight)
+    if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches){
+      let lastY = window.scrollY;
+      let b1x = 10, b1y = -10, b2x = 120, b2y = 10;
+      const clamp = (v,min,max)=> Math.max(min, Math.min(max, v));
+      const apply = ()=>{
+        document.documentElement.style.setProperty('--b1x', b1x + '%');
+        document.documentElement.style.setProperty('--b1y', b1y + '%');
+        document.documentElement.style.setProperty('--b2x', b2x + '%');
+        document.documentElement.style.setProperty('--b2y', b2y + '%');
+      };
+      apply();
+      let raf = null;
+      const tick = ()=>{
+        const y = window.scrollY;
+        const dy = y - lastY; // positive when scrolling down
+        lastY = y;
+        // small parallax deltas
+        b1x = clamp(b1x + dy * 0.005, 5, 20);
+        b1y = clamp(b1y + dy * -0.004, -15, 0);
+        b2x = clamp(b2x + dy * -0.004, 110, 125);
+        b2y = clamp(b2y + dy * 0.003, 5, 20);
+        apply();
+        raf = null;
+      };
+      window.addEventListener('scroll', () => { if(!raf) raf = requestAnimationFrame(tick); }, { passive: true });
+    }
+  </script>
+</body>
+</html>
