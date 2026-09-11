@@ -159,6 +159,7 @@ nav a.active { color: var(--text); background: var(--bg-elev); }
 
 /* Terminal */
 .terminal { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; max-width: 600px; }
+.terminal.full-width { max-width: none; width: 100%; }
 .terminal.interactive { cursor: text; }
 .terminal-header { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--bg-elev-2); border-bottom: 1px solid var(--border); }
 .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
