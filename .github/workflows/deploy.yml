@@ -41,7 +41,7 @@ jobs:
       - name: Sync static site files
         uses: burnett01/rsync-deployments@7.0.1
         with:
-          switches: -avz --delete --exclude='.git' --exclude='.github' --exclude='services' --exclude='README.md'
+          switches: -avz --delete --exclude='.git' --exclude='.github' --exclude='services' --exclude='README.md' --exclude='caelric'
           path: ./
           remote_path: /var/www/matthodges.uk/
           remote_host: ${{ secrets.VPS_HOST }}
