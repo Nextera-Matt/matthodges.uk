@@ -3,9 +3,12 @@ services:
     image: ghcr.io/nextera-matt/matthodges-contact:latest
     container_name: matthodges-contact
     restart: unless-stopped
+    network_mode: host
     env_file:
       - .env
-    ports:
-      # Bound to localhost only - nginx proxies to this, it's never
-      # exposed directly to the internet.
-      - "127.0.0.1:8091:8000"
+    environment:
+      # Host networking has no bridge/isolation, so the app must bind
+      # to loopback explicitly - otherwise it's reachable from the
+      # public internet directly, bypassing nginx and CSF entirely.
+      - APP_HOST=127.0.0.1
+      - APP_PORT=8091
