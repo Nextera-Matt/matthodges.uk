@@ -80,15 +80,24 @@ if (form && statusEl) {
 
     try {
       const formData = new FormData(form);
-      const res = await fetch(form.action, { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } });
+      const payload = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        message: formData.get('message'),
+        website: formData.get('website') || ''
+      };
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
       if (res.ok) {
-        let data = null; try { data = await res.json(); } catch {}
-        setStatus('ok', (data && data.message) || "Thanks! I'll get back to you shortly.");
+        setStatus('ok', "Thanks! I'll get back to you shortly.");
         form.reset();
       } else {
         let data = null; try { data = await res.json(); } catch {}
-        setStatus('err', (data && data.message) || 'Something went wrong. Please try again.');
+        setStatus('err', (data && data.detail) || 'Something went wrong. Please try again.');
       }
     } catch (err) {
       setStatus('err', 'Network error — please try again or email me directly.');

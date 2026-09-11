@@ -3,3 +3,5 @@
 *.swp
 backups/
 caelric/
+.env
+services/contact-api/.env
