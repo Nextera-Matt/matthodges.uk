@@ -37,7 +37,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Stamp last-updated dates
+        run: |
+          python3 - << 'EOF'
+          import re, glob
+          from datetime import datetime
 
+          now = datetime.utcnow()
+          iso = now.strftime("%Y-%m")
+          human = now.strftime("%b %Y")
+
+          pattern = re.compile(r'<time datetime="\d{4}-\d{2}">[^<]*</time>')
+          replacement = f'<time datetime="{iso}">{human}</time>'
+
+          for f in glob.glob("**/*.html", recursive=True):
+              with open(f) as fh:
+                  content = fh.read()
+              new_content = pattern.sub(replacement, content)
+              if new_content != content:
+                  with open(f, "w") as fh:
+                      fh.write(new_content)
+          EOF
+      
       - name: Sync static site files
         uses: burnett01/rsync-deployments@7.0.1
         with:
