@@ -32,6 +32,15 @@ jobs:
             ${{ env.IMAGE }}:latest
             ${{ env.IMAGE }}:${{ github.sha }}
 
+      - name: Build and push support-dashboard-demo image
+        uses: docker/build-push-action@v6
+        with:
+          context: services/support-dashboard-demo
+          push: true
+          tags: |
+            ghcr.io/nextera-matt/support-dashboard-demo:latest
+            ghcr.io/nextera-matt/support-dashboard-demo:${{ github.sha }}
+
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest

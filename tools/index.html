@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tools – Matt Hodges</title>
+  <meta name="description" content="Live demos of the scripts and tools on this site - try them, don't just take my word for it.">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="canonical" href="https://matthodges.uk/tools">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header id="header" class="scrolled">
+    <div class="container nav">
+      <a href="/" class="brand"><div class="brand-icon">MH</div><span>Matt Hodges</span></a>
+      <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <nav id="nav">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/services">How I Work</a></li>
+          <li><a href="/tools" class="active">Tools</a></li>
+          <li><a href="/projects">Projects</a></li>
+          <li><a href="/cv">CV</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-page container">
+      <div class="fade-up">
+        <h1>Try them <span class="gradient">yourself</span></h1>
+        <p class="lede">Instead of just reading the code, try it. Three of these actually run for real; the other four need real infrastructure I can't safely expose publicly, so they walk through exactly what a real run looks like instead.</p>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="section-header fade-up"><h2>Live tools</h2></div>
+      <div class="projects-grid stagger" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <a href="/tools/ip-lookup" class="project-card">
+          <div class="project-thumb" style="background: linear-gradient(135deg, var(--brand), #06b6d4); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">IP Lookup</div>
+          <div class="project-body">
+            <div class="project-title"><h3>IP Lookup</h3><span class="arrow"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 11l6-6m0 0v6m0-6H5"/></svg></span></div>
+            <p>Real geolocation lookup - enter an IP, get real data back.</p>
+            <div class="tags"><span class="tag">Live</span><span class="tag">Bash origin</span></div>
+          </div>
+        </a>
+        <a href="/tools/ooh-alerting" class="project-card">
+          <div class="project-thumb" style="background: linear-gradient(135deg, #f59e0b, #ef4444); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">OOH Alerting</div>
+          <div class="project-body">
+            <div class="project-title"><h3>OOH Alerting Classifier</h3><span class="arrow"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 11l6-6m0 0v6m0-6H5"/></svg></span></div>
+            <p>Paste a fake ticket, see which tier it'd escalate to.</p>
+            <div class="tags"><span class="tag">Live</span><span class="tag">PHP origin</span></div>
+          </div>
+        </a>
+        <a href="/tools/support-dashboard" class="project-card">
+          <div class="project-thumb" style="background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Support Dashboard</div>
+          <div class="project-body">
+            <div class="project-title"><h3>Support Dashboard</h3><span class="arrow"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 11l6-6m0 0v6m0-6H5"/></svg></span></div>
+            <p>Browse the actual dashboard app with generated fake tickets.</p>
+            <div class="tags"><span class="tag">Live</span><span class="tag">PHP + SQLite</span></div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="section-header fade-up">
+        <h2>Simulated walkthroughs</h2>
+        <p>These need real infrastructure to do anything - can't safely expose that publicly, so here's exactly what a real run looks like.</p>
+      </div>
+      <div class="projects-grid stagger" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <a href="/tools/zabbix-automation" class="project-card">
+          <div class="project-thumb" style="background: linear-gradient(135deg, #cc2936, #7f1d1d); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Zabbix Setup</div>
+          <div class="project-body">
+            <div class="project-title"><h3>Zabbix Automation</h3><span class="arrow"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 11l6-6m0 0v6m0-6H5"/></svg></span></div>
+            <p>Step through the real deployment flow, on canned output.</p>
+            <div class="tags"><span class="tag">Walkthrough</span></div>
+          </div>
+        </a>
+        <a href="/tools/cpanel-migration" class="project-card">
+          <div class="project-thumb" style="background: linear-gradient(135deg, #ff6c2c, #ea580c); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">cPanel Migration</div>
+          <div class="project-body">
+            <div class="project-title"><h3>cPanel Migration</h3><span class="arrow"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 11l6-6m0 0v6m0-6H5"/></svg></span></div>
+            <p>Watch a simulated account transfer, step by step.</p>
+            <div class="tags"><span class="tag">Walkthrough</span></div>
+          </div>
+        </a>
+        <a href="/tools/iptables" class="project-card">
+          <div class="project-thumb" style="background: linear-gradient(135deg, #4b5563, #1f2937); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">iptables</div>
+          <div class="project-body">
+            <div class="project-title"><h3>iptables Script</h3><span class="arrow"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 11l6-6m0 0v6m0-6H5"/></svg></span></div>
+            <p>See a simulated firewall rule change, backup to rollback.</p>
+            <div class="tags"><span class="tag">Walkthrough</span></div>
+          </div>
+        </a>
+        <a href="/tools/pingdom-zabbix" class="project-card">
+          <div class="project-thumb" style="background: linear-gradient(135deg, #16a34a, #15803d); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Pingdom → Zabbix</div>
+          <div class="project-body">
+            <div class="project-title"><h3>Pingdom → Zabbix</h3><span class="arrow"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 11l6-6m0 0v6m0-6H5"/></svg></span></div>
+            <p>Watch a simulated sync between the two platforms.</p>
+            <div class="tags"><span class="tag">Walkthrough</span></div>
+          </div>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-left"><span>&copy; <span id="year"></span> Matt Hodges</span></div>
+      <div class="footer-right">Last updated: <time datetime="2026-09">Sep 2026</time></div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

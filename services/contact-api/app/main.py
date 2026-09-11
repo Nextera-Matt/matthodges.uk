@@ -23,7 +23,11 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr, constr
 
+from .tools import router as tools_router
+
 app = FastAPI(title="matthodges.uk contact handler")
+
+app.include_router(tools_router)
 
 app.add_middleware(
     CORSMiddleware,

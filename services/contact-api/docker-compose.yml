@@ -12,3 +12,10 @@ services:
       # public internet directly, bypassing nginx and CSF entirely.
       - APP_HOST=127.0.0.1
       - APP_PORT=8091
+
+  support-dashboard-demo:
+    image: ghcr.io/nextera-matt/support-dashboard-demo:latest
+    container_name: matthodges-dashboard-demo
+    restart: unless-stopped
+    network_mode: host
+    # No .env needed - synthetic data only, no real secrets.

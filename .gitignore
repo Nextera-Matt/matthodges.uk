@@ -5,3 +5,6 @@ backups/
 caelric/
 .env
 services/contact-api/.env
+services/contact-api/app/__pycache__/
+services/support-dashboard-demo/data/dashboard.sqlite
+services/support-dashboard-demo/api/cache/*.json

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IP Lookup Tool – Matt Hodges</title>
+  <meta name="description" content="Live IP geolocation lookup tool - try the real thing, not just the code.">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="canonical" href="https://matthodges.uk/tools/ip-lookup">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header id="header" class="scrolled">
+    <div class="container nav">
+      <a href="/" class="brand"><div class="brand-icon">MH</div><span>Matt Hodges</span></a>
+      <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <nav id="nav">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/services">How I Work</a></li>
+          <li><a href="/tools" class="active">Tools</a></li>
+          <li><a href="/projects">Projects</a></li>
+          <li><a href="/cv">CV</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="project-hero container">
+      <a href="/tools" class="btn fade-up">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="18" height="18"><path d="M19 12H5m0 0l7 7m-7-7l7-7"/></svg>
+        Back to Tools
+      </a>
+      <div class="hero-badge">Live Tool • Real API</div>
+      <h1 class="fade-up">IP Lookup</h1>
+      <p class="lede fade-up">Enter any IP address and get real geolocation data back - the actual tool from <a href="https://github.com/Nextera-Matt/ip-lookup" target="_blank" rel="noopener">ip-lookup</a>, running live.</p>
+    </section>
+
+    <div class="project-content">
+      <section class="card fade-up">
+        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+          <input id="ip-input" type="text" placeholder="e.g. 8.8.8.8" value="8.8.8.8"
+            style="flex: 1; min-width: 200px; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: var(--font-mono);">
+          <button id="lookup-btn" class="btn primary" type="button">Look up</button>
+        </div>
+        <div id="lookup-status" style="font-size: 13px; color: var(--text-dim); min-height: 20px;"></div>
+        <div id="lookup-result" style="display: none; margin-top: 16px; font-family: var(--font-mono); font-size: 14px; line-height: 2;"></div>
+      </section>
+      <p style="font-size: 13px; color: var(--text-dim); text-align: center;">Rate-limited to 20 lookups/hour per visitor. Results cached for 5 minutes per IP.</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-left">
+        <span>&copy; <span id="year"></span> Matt Hodges</span>
+      </div>
+      <div class="footer-right">Last updated: <time datetime="2026-09">Sep 2026</time></div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const btn = document.getElementById('lookup-btn');
+    const input = document.getElementById('ip-input');
+    const status = document.getElementById('lookup-status');
+    const result = document.getElementById('lookup-result');
+
+    async function doLookup() {
+      const ip = input.value.trim();
+      if (!ip) return;
+      status.textContent = 'Looking up...';
+      result.style.display = 'none';
+      try {
+        const res = await fetch('/api/tools/ip-lookup?ip=' + encodeURIComponent(ip));
+        const data = await res.json();
+        if (!res.ok) {
+          status.textContent = data.detail || 'Lookup failed.';
+          return;
+        }
+        status.textContent = data.cached ? 'Served from cache.' : '';
+        result.innerHTML = `
+          <div><span style="color: var(--text-dim);">ip</span>      ${data.ip}</div>
+          <div><span style="color: var(--text-dim);">country</span> ${data.country}</div>
+          <div><span style="color: var(--text-dim);">region</span>  ${data.region}</div>
+          <div><span style="color: var(--text-dim);">city</span>    ${data.city}</div>
+          <div><span style="color: var(--text-dim);">isp</span>     ${data.isp}</div>
+          <div><span style="color: var(--text-dim);">asn</span>     ${data.asn}</div>
+          <div><a href="${data.maps_url}" target="_blank" rel="noopener">view on map →</a></div>
+        `;
+        result.style.display = 'block';
+      } catch (e) {
+        status.textContent = 'Something went wrong - try again.';
+      }
+    }
+
+    btn.addEventListener('click', doLookup);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') doLookup(); });
+  </script>
+</body>
+</html>

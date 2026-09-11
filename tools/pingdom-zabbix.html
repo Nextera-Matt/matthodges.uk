@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pingdom → Zabbix Walkthrough – Matt Hodges</title>
+  <meta name="description" content="Simulated walkthrough of the Pingdom-to-Zabbix integration - no real APIs touched.">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="canonical" href="https://matthodges.uk/tools/pingdom-zabbix">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header id="header" class="scrolled">
+    <div class="container nav">
+      <a href="/" class="brand"><div class="brand-icon">MH</div><span>Matt Hodges</span></a>
+      <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <nav id="nav">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/services">How I Work</a></li>
+          <li><a href="/tools" class="active">Tools</a></li>
+          <li><a href="/projects">Projects</a></li>
+          <li><a href="/cv">CV</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="project-hero container">
+      <a href="/tools" class="btn fade-up">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="18" height="18"><path d="M19 12H5m0 0l7 7m-7-7l7-7"/></svg>
+        Back to Tools
+      </a>
+      <div class="hero-badge">Simulated Walkthrough</div>
+      <h1 class="fade-up">Pingdom → Zabbix Walkthrough</h1>
+      <p class="lede fade-up">Needs real Pingdom and Zabbix API credentials to do anything - here's what a real sync looks like, from <a href="https://github.com/Nextera-Matt/Pingdom-To-Zabbix" target="_blank" rel="noopener">the actual code</a>.</p>
+    </section>
+
+    <div class="project-content">
+      <section class="card fade-up">
+        <div class="terminal" style="position: static;">
+          <div class="terminal-header">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+            <span class="terminal-title">L3@ops:~/Pingdom-To-Zabbix</span>
+          </div>
+          <div class="terminal-body" id="walkthrough-output" style="min-height: 260px;">
+            <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="terminal-cmd">python3 sync.py</span></div>
+          </div>
+        </div>
+        <button id="run-btn" class="btn primary" type="button" style="margin-top: 16px;">▶ Run walkthrough</button>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-left"><span>&copy; <span id="year"></span> Matt Hodges</span></div>
+      <div class="footer-right">Last updated: <time datetime="2026-09">Sep 2026</time></div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const lines = [
+      { t: 500, html: '<span class="terminal-output">Authenticating with Pingdom API...</span>' },
+      { t: 700, html: '<span class="terminal-success">✓ Authenticated</span>' },
+      { t: 900, html: '<span class="terminal-output">Fetching check statuses...</span>' },
+      { t: 700, html: '<span class="terminal-output">Found <span class="terminal-highlight">14</span> active checks</span>' },
+      { t: 900, html: '<span class="terminal-output">Authenticating with Zabbix API...</span>' },
+      { t: 700, html: '<span class="terminal-success">✓ Authenticated</span>' },
+      { t: 900, html: '<span class="terminal-output">Diffing Pingdom checks against existing Zabbix hosts...</span>' },
+      { t: 700, html: '<span class="terminal-output">2 new checks, 12 already synced</span>' },
+      { t: 900, html: '<span class="terminal-output">Creating Zabbix host + item + trigger for: <span class="terminal-highlight">api.customer-app.com</span></span>' },
+      { t: 900, html: '<span class="terminal-success">✓ Host created</span>' },
+      { t: 900, html: '<span class="terminal-output">Updating status for 12 existing hosts...</span>' },
+      { t: 900, html: '<span class="terminal-success">✓ All statuses synced</span>' },
+      { t: 600, html: '<span class="terminal-output" style="opacity:.6;"># Simulated walkthrough - no real API was called. Running this for real needs real Pingdom + Zabbix credentials.</span>' },
+    ];
+    document.getElementById('run-btn').addEventListener('click', function () {
+      const out = document.getElementById('walkthrough-output');
+      out.innerHTML = '<div class="terminal-line"><span class="terminal-prompt">$</span> <span class="terminal-cmd">python3 sync.py</span></div>';
+      this.disabled = true;
+      let delay = 400;
+      lines.forEach(line => {
+        delay += line.t;
+        setTimeout(() => {
+          const div = document.createElement('div');
+          div.className = 'terminal-line';
+          div.innerHTML = line.html;
+          out.appendChild(div);
+          out.scrollTop = out.scrollHeight;
+        }, delay);
+      });
+      setTimeout(() => { document.getElementById('run-btn').disabled = false; }, delay + 300);
+    });
+  </script>
+</body>
+</html>

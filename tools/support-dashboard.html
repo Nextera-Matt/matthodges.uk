@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Support Dashboard Demo – Matt Hodges</title>
+  <meta name="description" content="Live demo of the support ops dashboard - browse it with synthetic data.">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="canonical" href="https://matthodges.uk/tools/support-dashboard">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header id="header" class="scrolled">
+    <div class="container nav">
+      <a href="/" class="brand"><div class="brand-icon">MH</div><span>Matt Hodges</span></a>
+      <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <nav id="nav">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/services">How I Work</a></li>
+          <li><a href="/tools" class="active">Tools</a></li>
+          <li><a href="/projects">Projects</a></li>
+          <li><a href="/cv">CV</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="project-hero container">
+      <a href="/tools" class="btn fade-up">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="18" height="18"><path d="M19 12H5m0 0l7 7m-7-7l7-7"/></svg>
+        Back to Tools
+      </a>
+      <div class="hero-badge">Live Tool • Synthetic Data</div>
+      <h1 class="fade-up">Support Dashboard Demo</h1>
+      <p class="lede fade-up">The actual demo app from <a href="https://github.com/Nextera-Matt/support-dashboard" target="_blank" rel="noopener">support-dashboard</a>, running live with generated fake tickets - browse it, switch roles, see the RBAC in action.</p>
+      <div class="tags fade-up">
+        <span class="tag">PHP</span>
+        <span class="tag">SQLite</span>
+        <span class="tag">RBAC</span>
+      </div>
+    </section>
+
+    <div class="project-content">
+      <section class="card fade-up">
+        <p>Try switching roles by editing the URL:</p>
+        <ul>
+          <li><a href="/tools/support-dashboard/?role=engineer" target="_blank" rel="noopener"><code>?role=engineer</code></a> — sees only the first 10 tickets</li>
+          <li><a href="/tools/support-dashboard/?role=team_lead" target="_blank" rel="noopener"><code>?role=team_lead</code></a> — sees all tickets, no user management</li>
+          <li><a href="/tools/support-dashboard/?role=admin" target="_blank" rel="noopener"><code>?role=admin</code></a> — full access</li>
+        </ul>
+        <a href="/tools/support-dashboard/?role=admin" target="_blank" rel="noopener" class="btn primary" style="margin-top: 12px;">
+          Open the live dashboard →
+        </a>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-left"><span>&copy; <span id="year"></span> Matt Hodges</span></div>
+      <div class="footer-right">Last updated: <time datetime="2026-09">Sep 2026</time></div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
