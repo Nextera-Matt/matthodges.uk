@@ -11,10 +11,12 @@ docker-compose's env_file, never baked into the image):
   TO_ADDRESS   - where messages get delivered (defaults to SMTP_USER)
 """
 
+import html
 import os
 import smtplib
 import time
 from collections import defaultdict
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from fastapi import FastAPI, HTTPException, Request
@@ -89,12 +91,39 @@ def submit_contact(form: ContactForm, request: Request):
     if is_rate_limited(ip):
         raise HTTPException(status_code=429, detail="Too many submissions - try again later.")
 
-    body = f"From: {form.name} <{form.email}>\nIP: {ip}\n\n{form.message}"
-    msg = MIMEText(body)
+    plain_body = f"From: {form.name} <{form.email}>\nIP: {ip}\n\n{form.message}"
+
+    # Escape user input before it goes anywhere near HTML - this is only
+    # ever displayed in Matt's own inbox, but a submitter pasting "<b>" or
+    # similar shouldn't be able to mangle the formatting.
+    safe_name = html.escape(form.name)
+    safe_email = html.escape(form.email)
+    safe_message = html.escape(form.message).replace("\n", "<br>")
+
+    html_body = f"""\
+<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto;">
+  <div style="background: #0d1117; color: #e6edf3; padding: 20px 24px; border-radius: 8px 8px 0 0;">
+    <p style="margin: 0; font-size: 13px; color: #8a95a8;">Portfolio contact form</p>
+    <p style="margin: 4px 0 0; font-size: 18px; font-weight: 600;">{safe_name}</p>
+    <p style="margin: 2px 0 0; font-size: 14px; color: #8a95a8;">{safe_email}</p>
+  </div>
+  <div style="border: 1px solid #e1e4e8; border-top: none; padding: 20px 24px; border-radius: 0 0 8px 8px;">
+    <p style="margin: 0; line-height: 1.6; color: #24292f;">{safe_message}</p>
+  </div>
+  <p style="font-size: 12px; color: #8a95a8; margin: 12px 4px 0;">From IP {html.escape(ip)}</p>
+</div>
+"""
+
+    msg = MIMEMultipart("alternative")
     msg["Subject"] = f"Portfolio contact form: {form.name}"
     msg["From"] = SMTP_USER
     msg["To"] = TO_ADDRESS
     msg["Reply-To"] = form.email
+    # Plain text attached first - clients that support HTML use the last
+    # part (the HTML one), so this order is what makes plain text the
+    # fallback rather than the preferred version.
+    msg.attach(MIMEText(plain_body, "plain"))
+    msg.attach(MIMEText(html_body, "html"))
 
     try:
         with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=10) as server:
