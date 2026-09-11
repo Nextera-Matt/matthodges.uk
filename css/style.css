@@ -69,7 +69,7 @@ button { font-family: inherit; cursor: pointer; }
 .bg-glow { display: none; }
 
 /* ===== Container ===== */
-.container { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+.container { max-width: var(--maxw); margin: 0 auto; padding-left: 24px; padding-right: 24px; }
 
 /* ===== Header ===== */
 header {
@@ -203,7 +203,7 @@ nav a.active { color: var(--text); background: var(--bg-elev); }
 .section-header.centered { justify-content: center; text-align: center; flex-direction: column; align-items: center; }
 .section-header h2 { font-family: var(--font-mono); font-size: clamp(24px, 3.5vw, 34px); font-weight: 700; letter-spacing: -0.01em; margin: 0; }
 .section-header p { color: var(--text-dim); margin: 0; }
-section { padding: 80px 0; }
+section { padding-top: 80px; padding-bottom: 80px; }
 
 /* ===== Focus Cards ===== */
 .focus-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
