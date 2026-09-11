@@ -5,18 +5,7 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    networks:
-      - default
     ports:
       # Bound to localhost only - nginx proxies to this, it's never
       # exposed directly to the internet.
       - "127.0.0.1:8091:8000"
-
-networks:
-  default:
-    # Use Docker's pre-existing default bridge (docker0) rather than
-    # letting compose create its own project network - CSF is only
-    # configured to trust docker0's subnet (172.17.0.0/16), so a custom
-    # compose network falls outside what it allows through.
-    external: true
-    name: bridge
