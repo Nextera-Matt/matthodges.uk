@@ -19,6 +19,101 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    /* ===== Screenshot Gallery ===== */
+    .screenshots-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+    @media (max-width: 700px) {
+      .screenshots-grid { grid-template-columns: 1fr; }
+    }
+    .screenshot-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--bg-elev);
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .screenshot-item:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+    .screenshot-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .screenshot-caption {
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      border-top: 1px solid var(--border);
+    }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed; inset: 0; z-index: 9000;
+      background: rgba(0,0,0,0.92);
+      align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-inner {
+      position: relative;
+      max-width: 1200px;
+      max-height: 90vh;
+      width: 100%;
+    }
+    .lightbox-inner img {
+      width: 100%;
+      height: auto;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .lightbox-caption {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 12px;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: -40px; right: 0;
+      background: none; border: none;
+      color: #fff; font-size: 28px;
+      cursor: pointer; line-height: 1;
+      opacity: 0.7;
+    }
+    .lightbox-close:hover { opacity: 1; }
+    .lightbox-nav {
+      position: absolute;
+      top: 50%; transform: translateY(-50%);
+      background: rgba(0,0,0,0.6);
+      border: 1px solid var(--border);
+      color: #fff; font-size: 20px;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .lightbox-nav:hover { background: rgba(255,255,255,0.1); }
+    .lightbox-prev { left: -56px; }
+    .lightbox-next { right: -56px; }
+    @media (max-width: 900px) {
+      .lightbox-prev { left: 8px; }
+      .lightbox-next { right: 8px; }
+    }
+  </style>
 </head>
 <body>
   <div class="bg-grid" aria-hidden="true"></div>
@@ -47,7 +142,7 @@
 
   <main class="container">
     <section class="project-hero fade-up">
-      <div class="hero-badge">Production System • Live Since Nov 2024</div>
+      <div class="hero-badge">Production System • Live Since Nov 2025</div>
       <h1>Support Dashboard</h1>
       <p class="lede">Unified ticket visibility platform consolidating 3 separate systems, aggregating provider status, and powering 24/7 operational coverage for a 6-person engineering team.</p>
       <div class="tags" style="margin-top: 24px;">
@@ -63,7 +158,7 @@
     <div class="project-content">
       <section class="card fade-up">
         <h2>The Problem</h2>
-        <p>The team relied on three separate ticketing systems: ICS Ubersmith, VPS.net Ubersmith, and Zoho Desk. Without a unified view, every shift required:</p>
+        <p>The team relied on three separate ticketing systems: 2 Ubersmith instances, and Zoho Desk. Without a unified view, every shift required:</p>
         <ul>
           <li>Logging into three separate dashboards to see all queues</li>
           <li>Manual context-switching between systems when triaging tickets</li>
@@ -95,7 +190,7 @@
           <li><strong>Role-Based Access Control:</strong> SQLite-backed RBAC with viewer, tech, and admin roles</li>
         </ul>
 
-        <h3>Performance & Reliability</h3>
+        <h3>Performance &amp; Reliability</h3>
         <ul>
           <li>Response time improvement: <strong>2-5 seconds → &lt;50ms (97%+ cache hit rate)</strong></li>
           <li>APCu caching with background warming ensures data freshness without latency</li>
@@ -144,6 +239,59 @@
             <td style="padding: 12px; color: var(--accent);">Production, actively iterated</td>
           </tr>
         </table>
+      </section>
+
+      <!-- ===== SCREENSHOTS ===== -->
+      <section class="card fade-up">
+        <h2>Screenshots</h2>
+        <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 4px;">Customer and colleague data redacted. Click any screenshot to expand.</p>
+
+        <div class="screenshots-grid" id="screenshots-grid">
+          <div class="screenshot-item" data-index="0">
+            <img src="/images/dashboard/dashboard-tickets-row.png" alt="Unified ticket queue in row view" loading="lazy">
+            <div class="screenshot-caption">Tickets — unified queue (row view)</div>
+          </div>
+          <div class="screenshot-item" data-index="1">
+            <img src="/images/dashboard/dashboard-status.png" alt="Provider status aggregation page" loading="lazy">
+            <div class="screenshot-caption">Status — external provider health</div>
+          </div>
+          <div class="screenshot-item" data-index="2">
+            <img src="/images/dashboard/dashboard-internal-services.png" alt="Internal services health bar" loading="lazy">
+            <div class="screenshot-caption">Status — internal services monitor</div>
+          </div>
+          <div class="screenshot-item" data-index="3">
+            <img src="/images/dashboard/dashboard-maintenance.png" alt="Scheduled maintenance tracker" loading="lazy">
+            <div class="screenshot-caption">Status — scheduled maintenance tracker</div>
+          </div>
+          <div class="screenshot-item" data-index="4">
+            <img src="/images/dashboard/dashboard-search.png" alt="Ticket search with date filters" loading="lazy">
+            <div class="screenshot-caption">Search — cross-system ticket search</div>
+          </div>
+          <div class="screenshot-item" data-index="5">
+            <img src="/images/dashboard/dashboard-search-results.png" alt="Search results with pagination" loading="lazy">
+            <div class="screenshot-caption">Search — paginated results (406 tickets)</div>
+          </div>
+          <div class="screenshot-item" data-index="6">
+            <img src="/images/dashboard/dashboard-tools.png" alt="Tools page with shift handover and KB links" loading="lazy">
+            <div class="screenshot-caption">Tools — shift handover &amp; knowledge base</div>
+          </div>
+          <div class="screenshot-item" data-index="7">
+            <img src="/images/dashboard/dashboard-vip-clients.png" alt="VIP and Priority client configuration" loading="lazy">
+            <div class="screenshot-caption">Tools — VIP &amp; Priority client config</div>
+          </div>
+          <div class="screenshot-item" data-index="8">
+            <img src="/images/dashboard/dashboard-cache.png" alt="Cache monitor with hit rate and memory stats" loading="lazy">
+            <div class="screenshot-caption">Cache — APCu monitor (98.9% hit rate)</div>
+          </div>
+          <div class="screenshot-item" data-index="9">
+            <img src="/images/dashboard/dashboard-cache-detail.png" alt="Cache file detail view" loading="lazy">
+            <div class="screenshot-caption">Cache — file cache detail</div>
+          </div>
+          <div class="screenshot-item" data-index="10">
+            <img src="/images/dashboard/dashboard-bg-jobs.png" alt="Background job status and warmer stats" loading="lazy">
+            <div class="screenshot-caption">Cache — background warmers &amp; job health</div>
+          </div>
+        </div>
       </section>
 
       <section class="card fade-up">
@@ -213,6 +361,17 @@
     </div>
   </main>
 
+  <!-- ===== LIGHTBOX ===== -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Screenshot viewer">
+    <div class="lightbox-inner">
+      <button class="lightbox-close" id="lightbox-close" aria-label="Close">×</button>
+      <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous">‹</button>
+      <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next">›</button>
+      <img id="lightbox-img" src="" alt="">
+      <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+  </div>
+
   <footer>
     <div class="container footer-content">
       <div class="footer-left">
@@ -226,10 +385,55 @@
           </a>
         </div>
       </div>
-      <div class="footer-right">Last updated: <time datetime="2026-02">Feb 2026</time></div>
+      <div class="footer-right">Last updated: <time datetime="2026-03">Mar 2026</time></div>
     </div>
   </footer>
 
   <script src="/js/main.js"></script>
+  <script>
+    // Lightbox
+    const screenshots = Array.from(document.querySelectorAll('.screenshot-item'));
+    const lightbox    = document.getElementById('lightbox');
+    const lbImg       = document.getElementById('lightbox-img');
+    const lbCaption   = document.getElementById('lightbox-caption');
+    let current = 0;
+
+    function openLightbox(idx) {
+      current = idx;
+      const item = screenshots[idx];
+      lbImg.src = item.querySelector('img').src;
+      lbImg.alt = item.querySelector('img').alt;
+      lbCaption.textContent = item.querySelector('.screenshot-caption').textContent;
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function navigate(dir) {
+      current = (current + dir + screenshots.length) % screenshots.length;
+      openLightbox(current);
+    }
+
+    screenshots.forEach((item, idx) => {
+      item.addEventListener('click', () => openLightbox(idx));
+    });
+
+    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+    document.getElementById('lightbox-prev').addEventListener('click', () => navigate(-1));
+    document.getElementById('lightbox-next').addEventListener('click', () => navigate(1));
+
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+
+    document.addEventListener('keydown', e => {
+      if (!lightbox.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') navigate(-1);
+      if (e.key === 'ArrowRight') navigate(1);
+    });
+  </script>
 </body>
 </html>
