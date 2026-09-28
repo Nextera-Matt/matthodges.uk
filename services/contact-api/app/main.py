@@ -55,9 +55,10 @@ class ContactForm(BaseModel):
     email: EmailStr
     message: constr(strip_whitespace=True, min_length=1, max_length=5000)
     # Honeypot field. Real users never see or fill this (hidden via CSS on
-    # the form) - matches the "Leave empty" field already on the site.
-    # If it's non-empty, the submitter is almost certainly a bot.
-    website: constr(strip_whitespace=True, max_length=0) = ""
+    # the form). The browser posts it as JSON `website`. If it's non-empty,
+    # the submitter is almost certainly a bot: accept the request and drop
+    # it, rather than 422, so the bot doesn't learn the field is checked.
+    website: constr(strip_whitespace=True, max_length=200) = ""
 
 
 def client_ip(request: Request) -> str:

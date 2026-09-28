@@ -64,7 +64,12 @@ if (form && statusEl) {
 
   form.addEventListener('submit', async (e) => {
     const honey = form.querySelector('#website');
-    if (honey?.value) { e.preventDefault(); return; }
+    if (honey?.value) {
+      e.preventDefault();
+      setStatus('ok', "Thanks! I'll get back to you shortly.");
+      form.reset();
+      return;
+    }
 
     if (!form.checkValidity()) {
       e.preventDefault();
@@ -193,7 +198,7 @@ if (terminalInput && terminalOutput && terminal) {
       '  <span class="terminal-highlight">stats</span>      - Production metrics',
       '  <span class="terminal-highlight">top</span>        - Running services',
       '  <span class="terminal-highlight">contact</span>    - Get in touch',
-      '  <span class="terminal-highlight">uptime</span>     - Site uptime',
+      '  <span class="terminal-highlight">uptime</span>     - Session uptime',
       '  <span class="terminal-highlight">fortune</span>    - Infrastructure wisdom',
       '  <span class="terminal-highlight">neofetch</span>   - System info',
       '  <span class="terminal-highlight">cv</span>         - Download CV',
@@ -202,10 +207,10 @@ if (terminalInput && terminalOutput && terminal) {
     ],
     whoami: () => [
       'Matt Hodges',
-      '\u251C\u2500 Role: Hosting Support Engineer (L3)',
+      '\u251C\u2500 Role: Systems Administrator at Fixter',
       '\u251C\u2500 Location: United Kingdom',
-      '\u251C\u2500 Focus: Linux, Automation, Monitoring, Internal Tooling',
-      '\u2514\u2500 Status: <span class="terminal-success">Open to opportunities</span>'
+      '\u251C\u2500 Focus: Linux, automation, access, reliability',
+      '\u2514\u2500 Previously: Cloud & Infrastructure Engineer, THG Ingenuity'
     ],
     skills: () => [
       'Tech Stack:',
@@ -268,8 +273,8 @@ if (terminalInput && terminalOutput && terminal) {
     },
     contact: () => [
       'Get in touch:',
-      '  Email:    <a href="mailto:matthodges20@gmail.com" class="terminal-link">matthodges20@gmail.com</a>',
-      '  GitHub:   <a href="https://github.com/NexteraMatt" target="_blank" class="terminal-link">github.com/NexteraMatt</a>',
+      '  Email:    <a href="mailto:contact@matthodges.uk" class="terminal-link">contact@matthodges.uk</a>',
+      '  GitHub:   <a href="https://github.com/Nextera-Matt" target="_blank" class="terminal-link">github.com/Nextera-Matt</a>',
       '  LinkedIn: <a href="https://www.linkedin.com/in/matt-hodges-7b0642192/" target="_blank" class="terminal-link">linkedin.com/in/matt-hodges</a>',
       '',
       'Or scroll down to the contact form \u{1F447}'
@@ -281,8 +286,7 @@ if (terminalInput && terminalOutput && terminal) {
       const hours = Math.floor(elapsed / 3600000);
       return [
         `Session uptime: ${hours}h ${minutes}m ${seconds}s`,
-        'Site status: <span class="terminal-success">\u25CF All systems operational</span>',
-        'Last deploy:  <span class="terminal-highlight">Feb 2026</span>'
+        'Site status: <span class="terminal-success">\u25CF All systems operational</span>'
       ];
     },
     cv: () => {
@@ -395,11 +399,11 @@ if (terminalInput && terminalOutput && terminal) {
       const safeFile = escapeHtml(file);
       const files = {
         'about.txt': [
-          'Matt Hodges - Hosting Support Engineer (L3)',
-          'Building reliable infrastructure and internal tooling since 2019.',
-          'Currently at THG Ingenuity Cloud Services.',
+          'Matt Hodges - Systems Administrator at Fixter',
+          'Infrastructure, access, and automation. Moving into DevOps.',
+          'Previously Cloud & Infrastructure Engineer at THG Ingenuity.',
           '',
-          'Open to infrastructure and senior support roles.'
+          'Six years there, from infrastructure apprentice to L3.'
         ],
         'skills.json': [
           '{',
@@ -413,8 +417,8 @@ if (terminalInput && terminalOutput && terminal) {
         'contact.md': [
           '# Contact',
           '',
-          'Email: matthodges20@gmail.com',
-          'GitHub: github.com/NexteraMatt',
+          'Email: contact@matthodges.uk',
+          'GitHub: github.com/Nextera-Matt',
           'LinkedIn: linkedin.com/in/matt-hodges-7b0642192'
         ],
         '.bash_history': [
@@ -470,9 +474,9 @@ if (terminalInput && terminalOutput && terminal) {
       return recent.map((cmd, i) => `  ${i + 1}  ${escapeHtml(cmd)}`);
     },
     welcome: () => [
-      'Hey! I\'m Matt \u2014 Hosting Support Engineer.',
+      'Hey! I\'m Matt \u2014 Systems Administrator at Fixter, moving into DevOps.',
       '',
-      'I build internal tooling and automation for hosting operations.',
+      'Before that, six years at THG Ingenuity building internal tooling.',
       'Type <span class="terminal-highlight">help</span> to see available commands.'
     ]
   };
