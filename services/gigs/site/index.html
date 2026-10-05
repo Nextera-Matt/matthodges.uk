@@ -2,18 +2,25 @@
 <html lang="en-GB">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Gigs</title>
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="description" content="Private archive of gig recordings.">
+  <meta name="theme-color" content="#07060a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23140e0a'/%3E%3Cpath d='M13 9.5l11 6.5-11 6.5z' fill='%23ffb15a'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,620&family=Outfit:wght@380;500;640&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/archive.css">
 </head>
 <body>
+  <div class="wash" aria-hidden="true">
+    <span class="wash-a"></span>
+    <span class="wash-b"></span>
+  </div>
+
   <header class="bar">
-    <div>
+    <div class="brand">
       <p class="mark">Gigs</p>
       <p class="stats" id="stats" aria-live="polite">Loading recordings…</p>
     </div>
@@ -25,29 +32,46 @@
     </div>
   </header>
 
-  <div class="shell">
-    <aside class="rail">
-      <label class="visually-hidden" for="q">Search recordings</label>
-      <input id="q" type="search" placeholder="Search title, venue, notes" autocomplete="off">
+  <main class="shell">
+    <aside class="rail" id="rail">
+      <div class="search">
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
+          <path d="M16 16.5L20 20.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+        </svg>
+        <label class="visually-hidden" for="q">Search recordings</label>
+        <input id="q" type="search" placeholder="Search title, venue, notes" autocomplete="off" enterkeyhint="search">
+      </div>
       <div class="years" id="years" role="group" aria-label="Filter by year"></div>
       <p class="status" id="status" hidden></p>
       <ul class="list" id="list"></ul>
     </aside>
 
-    <section class="stage-wrap">
+    <section class="stage-wrap" aria-label="Player">
       <div class="stage" id="stage">
-        <p class="stage-empty" id="stage-empty">Select a recording.</p>
+        <p class="stage-empty" id="stage-empty">
+          <span class="stage-mark" aria-hidden="true"></span>
+          <span id="stage-copy">Select a recording.</span>
+        </p>
         <video id="player" hidden controls playsinline preload="metadata"></video>
+        <p class="timecode" id="timecode" hidden>00:00</p>
         <p class="fallback" id="fallback" hidden></p>
       </div>
       <div class="now" id="now" hidden>
         <h1 id="now-title"></h1>
+        <a class="download" id="download" href="" download>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 4v11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            <path d="M7.5 11.5L12 16l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M5 19h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+          Download
+        </a>
         <p id="now-meta"></p>
         <p id="now-notes" hidden></p>
-        <a class="download" id="download" href="" download>Download</a>
       </div>
     </section>
-  </div>
+  </main>
 
   <script src="/archive.js"></script>
 </body>
