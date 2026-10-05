@@ -59,6 +59,8 @@
       </div>
       <div class="now" id="now" hidden>
         <h1 id="now-title"></h1>
+        <div class="now-actions">
+          <button type="button" class="edit-toggle" id="edit-toggle" aria-expanded="false" aria-controls="editor">Edit</button>
         <a class="download" id="download" href="" download>
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 4v11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
@@ -67,8 +69,31 @@
           </svg>
           Download
         </a>
+        </div>
         <p id="now-meta"></p>
         <p id="now-notes" hidden></p>
+        <form class="editor" id="editor" hidden>
+          <label class="wide">Title
+            <input id="edit-title" name="title" required maxlength="500" autocomplete="off">
+          </label>
+          <label>Date
+            <input id="edit-date" name="date" type="date">
+          </label>
+          <label>Venue
+            <input id="edit-venue" name="venue" maxlength="500" autocomplete="off">
+          </label>
+          <label class="wide">File name
+            <input id="edit-name" name="name" required maxlength="181" spellcheck="false" autocomplete="off">
+          </label>
+          <label class="wide">Notes
+            <textarea id="edit-notes" name="notes" maxlength="4000" rows="3"></textarea>
+          </label>
+          <p class="editor-error" id="editor-error" hidden></p>
+          <div class="editor-actions wide">
+            <button type="submit" id="edit-save">Save</button>
+            <button type="button" id="edit-cancel">Cancel</button>
+          </div>
+        </form>
       </div>
     </section>
   </main>

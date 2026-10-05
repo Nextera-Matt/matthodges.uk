@@ -22,6 +22,16 @@
   const nowMeta = document.getElementById("now-meta");
   const nowNotes = document.getElementById("now-notes");
   const downloadEl = document.getElementById("download");
+  const editToggle = document.getElementById("edit-toggle");
+  const editor = document.getElementById("editor");
+  const editTitle = document.getElementById("edit-title");
+  const editDate = document.getElementById("edit-date");
+  const editVenue = document.getElementById("edit-venue");
+  const editName = document.getElementById("edit-name");
+  const editNotes = document.getElementById("edit-notes");
+  const editSave = document.getElementById("edit-save");
+  const editCancel = document.getElementById("edit-cancel");
+  const editorError = document.getElementById("editor-error");
 
   const dateFormat = new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
@@ -35,6 +45,8 @@
   let year = "all";
   let currentFile = "";
   let animateList = true;
+  let openedDate = "";
+  let openedName = "";
 
   function extension(file) {
     const base = file.split("/").pop() || "";
@@ -192,16 +204,7 @@
     timecode.textContent = end ? `${now} / ${end}` : now;
   }
 
-  function selectItem(item, options = {}) {
-    currentFile = item.file;
-    document.body.classList.add("has-selection");
-    setPlaying(false);
-    stageEmpty.hidden = true;
-    timecode.hidden = true;
-    nowEl.hidden = false;
-    nowEl.classList.remove("arrive");
-    void nowEl.offsetWidth;
-    nowEl.classList.add("arrive");
+  function paintNow(item) {
     nowTitle.textContent = item.title || item.file;
     nowMeta.textContent = [formatDate(item.date), details(item)].filter(Boolean).join(" · ");
     nowNotes.hidden = !item.notes;
@@ -209,13 +212,18 @@
     const url = mediaUrl(item.file);
     downloadEl.href = url;
     downloadEl.setAttribute("download", item.file.split("/").pop() || "recording");
+  }
+
+  function loadMedia(item) {
     fallback.hidden = true;
+    timecode.hidden = true;
+    setPlaying(false);
     if (PLAYABLE.has(extension(item.file))) {
       player.hidden = false;
       player.classList.remove("swap");
       void player.offsetWidth;
       player.classList.add("swap");
-      player.src = url;
+      player.src = mediaUrl(item.file);
     } else {
       player.hidden = true;
       player.removeAttribute("src");
@@ -223,12 +231,76 @@
       fallback.hidden = false;
       fallback.textContent = "This format will not play in the browser. Download it and open it locally.";
     }
+  }
+
+  function closeEditor() {
+    editor.hidden = true;
+    editorError.hidden = true;
+    editToggle.setAttribute("aria-expanded", "false");
+    editSave.disabled = false;
+  }
+
+  function openEditor() {
+    const item = items.find((entry) => entry.file === currentFile);
+    if (!item) return;
+    editTitle.value = item.title || "";
+    editDate.value = item.date || "";
+    editVenue.value = item.venue || "";
+    editNotes.value = item.notes || "";
+    openedDate = item.date || "";
+    openedName = item.file.split("/").pop() || "";
+    editName.value = openedName;
+    delete editName.dataset.touched;
+    editorError.hidden = true;
+    editor.hidden = false;
+    editToggle.setAttribute("aria-expanded", "true");
+    editTitle.focus();
+  }
+
+  function syncNameToDate() {
+    if (editName.dataset.touched === "true") return;
+    if (!openedDate || !openedName.startsWith(openedDate)) return;
+    const rest = openedName.slice(openedDate.length);
+    if (editDate.value) {
+      editName.value = editDate.value + rest;
+      return;
+    }
+    editName.value = rest.replace(/^[ _]/, "");
+  }
+
+  function sortItems() {
+    items.sort((a, b) => (a.title || "").localeCompare(b.title || "", "en"));
+    items.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  }
+
+  function selectItem(item, options = {}) {
+    const fileChanged = item.file !== currentFile;
+    currentFile = item.file;
+    closeEditor();
+    document.body.classList.add("has-selection");
+    stageEmpty.hidden = true;
+    nowEl.hidden = false;
+    if (fileChanged) {
+      nowEl.classList.remove("arrive");
+      void nowEl.offsetWidth;
+      nowEl.classList.add("arrive");
+    }
+    paintNow(item);
+    if (fileChanged) loadMedia(item);
     renderList();
+    if (options.keepPlace) return;
     if (phoneQuery.matches) {
       stage.scrollIntoView({ behavior: "smooth", block: "start" });
     } else if (options.scrollList) {
       listEl.querySelector('[aria-pressed="true"]')?.scrollIntoView({ block: "nearest" });
     }
+  }
+
+  function replaceItem(previousFile, item) {
+    items = items.filter((entry) => entry.file !== previousFile && entry.file !== item.file);
+    items.push(item);
+    sortItems();
+    selectItem(item, { keepPlace: true });
   }
 
   function renderList() {
@@ -346,9 +418,66 @@
 
   searchEl.addEventListener("input", () => renderList());
 
+  editToggle.addEventListener("click", () => {
+    if (editor.hidden) openEditor();
+    else closeEditor();
+  });
+  editCancel.addEventListener("click", () => closeEditor());
+  editName.addEventListener("input", () => {
+    editName.dataset.touched = "true";
+  });
+  editDate.addEventListener("input", syncNameToDate);
+  editor.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const previousFile = currentFile;
+    editorError.hidden = true;
+    editSave.disabled = true;
+    fetch("/api/recording", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        file: previousFile,
+        title: editTitle.value,
+        venue: editVenue.value,
+        date: editDate.value,
+        notes: editNotes.value,
+        name: editName.value,
+      }),
+    })
+      .then(async (response) => {
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          const fallbackMessage = response.status === 404
+            ? "Saving is not available on the server yet."
+            : "Could not save that recording.";
+          throw new Error(payload.error || fallbackMessage);
+        }
+        if (!payload || typeof payload.file !== "string") {
+          throw new Error("Could not save that recording.");
+        }
+        replaceItem(previousFile, payload);
+      })
+      .catch((error) => {
+        editorError.hidden = false;
+        editorError.textContent = error instanceof Error && error.message
+          ? error.message
+          : "Could not save that recording.";
+        editSave.disabled = false;
+      });
+  });
+
   document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !editor.hidden) {
+      closeEditor();
+      return;
+    }
     if (event.metaKey || event.ctrlKey || event.altKey) return;
-    if (event.target === searchEl || event.target instanceof HTMLInputElement) return;
+    if (editor.contains(event.target)) return;
+    if (
+      event.target === searchEl
+      || event.target instanceof HTMLInputElement
+      || event.target instanceof HTMLTextAreaElement
+    ) return;
     if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
     const visible = items.filter(matches);
     if (!visible.length) return;

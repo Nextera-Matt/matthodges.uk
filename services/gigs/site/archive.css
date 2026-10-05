@@ -548,7 +548,89 @@ body.is-playing .stage {
   gap: 10px 16px;
 }
 .now h1 { flex: 1 1 220px; }
-.download { flex: none; margin-left: auto; }
+.now-actions {
+  flex: none;
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.download,
+.edit-toggle { flex: none; margin-left: 0; }
+.edit-toggle {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 4px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  font-weight: 560;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease), transform 0.15s var(--ease);
+}
+@media (hover: hover) {
+  .edit-toggle:hover { background: var(--fill-strong); }
+}
+.edit-toggle:active,
+.editor button:active { transform: scale(0.98); }
+.edit-toggle[aria-expanded="true"] {
+  background: var(--amber);
+  border-color: transparent;
+  color: var(--ink);
+}
+.editor {
+  flex: 1 0 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 14px;
+  margin-top: 6px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+}
+.editor label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.editor .wide { grid-column: 1 / -1; }
+.editor input,
+.editor textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--text);
+  font-size: 16px;
+}
+.editor textarea { resize: vertical; min-height: 76px; }
+.editor input:focus,
+.editor textarea:focus {
+  outline: none;
+  border-color: rgba(255, 177, 90, 0.75);
+  box-shadow: 0 0 0 4px rgba(255, 177, 90, 0.16);
+}
+.editor-actions { display: flex; gap: 8px; }
+.editor button {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 0;
+  background: var(--amber);
+  color: var(--ink);
+  font-weight: 600;
+}
+#edit-cancel { background: transparent; color: var(--text); border: 1px solid var(--line); }
+.editor button:disabled { opacity: 0.55; }
+.editor-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #ffb0a0;
+  font-size: 14px;
+}
 #now-meta,
 #now-notes { flex: 1 0 100%; }
 
@@ -591,7 +673,8 @@ body.is-playing .stage {
     padding: 8px 12px calc(24px + env(safe-area-inset-bottom));
   }
   .now h1 { font-size: 30px; }
-  .download { margin-left: 0; }
+  .now-actions { margin-left: 0; }
+  .editor { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

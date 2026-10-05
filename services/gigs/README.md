@@ -106,3 +106,17 @@ That becomes date `2024-06-12`, venue `the venue`, title `full set`. To override
 Notes you edit in `catalog.json` are kept on the next rebuild unless a sidecar sets the same field. Browser playback works for MP4, WebM, and Ogg. MOV is hit and miss. MKV is offered as a download. Install `ffmpeg` on the VPS if you want durations filled in (`ffprobe`).
 
 The catalog rebuild also lands on the server at `/home/rocky/gigs/rebuild-catalog.py` on the next deploy, or immediately via the sync script.
+
+## Edit from the site
+
+The player has an Edit button for the title, date, venue, notes, and file name. A save writes a sidecar next to the video, renames the file when the file name changed, and rebuilds the catalog. The date on the site is the date you save, including when the file name still starts with an older one.
+
+The editor is a small service on the VPS, behind the same password as the site. Once, as root, after the files are in `/home/rocky/gigs`:
+
+```bash
+chown -R rocky:rocky /var/media/gigs
+cp /home/rocky/gigs/gigs.matthodges.uk.conf /etc/nginx/conf.d/gigs.matthodges.uk.conf
+cp /home/rocky/gigs/gigs-edit.service /etc/systemd/system/gigs-edit.service
+nginx -t && systemctl reload nginx
+systemctl enable --now gigs-edit
+```
