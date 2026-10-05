@@ -1,0 +1,13 @@
+[Unit]
+Description=Gig archive edits
+After=network.target
+
+[Service]
+User=rocky
+Group=rocky
+ExecStart=/usr/bin/python3 /home/rocky/gigs/archive-api.py
+Restart=on-failure
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
