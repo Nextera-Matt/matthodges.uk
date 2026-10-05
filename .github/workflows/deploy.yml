@@ -80,6 +80,28 @@ jobs:
           remote_user: ${{ secrets.VPS_USER }}
           remote_key: ${{ secrets.VPS_SSH_KEY }}
 
+      - name: Sync gig archive site
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avz --delete
+          path: services/gigs/site/
+          remote_path: /var/www/gigs.matthodges.uk/
+          remote_host: ${{ secrets.VPS_HOST }}
+          remote_port: 2233
+          remote_user: ${{ secrets.VPS_USER }}
+          remote_key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: Sync gig archive tools
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avz --exclude site
+          path: services/gigs/
+          remote_path: /home/rocky/gigs/
+          remote_host: ${{ secrets.VPS_HOST }}
+          remote_port: 2233
+          remote_user: ${{ secrets.VPS_USER }}
+          remote_key: ${{ secrets.VPS_SSH_KEY }}
+
       - name: Sync docker-compose file for contact-api
         uses: burnett01/rsync-deployments@7.0.1
         with:

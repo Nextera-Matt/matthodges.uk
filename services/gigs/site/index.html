@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gigs</title>
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="description" content="Private archive of gig recordings.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,620&family=Outfit:wght@380;500;640&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/archive.css">
+</head>
+<body>
+  <header class="bar">
+    <div>
+      <p class="mark">Gigs</p>
+      <p class="stats" id="stats" aria-live="polite">Loading recordings…</p>
+    </div>
+    <div class="disk" id="disk" hidden>
+      <div class="disk-track" role="meter" id="disk-meter" aria-label="Disk used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span id="disk-bar"></span>
+      </div>
+      <p id="disk-label"></p>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="rail">
+      <label class="visually-hidden" for="q">Search recordings</label>
+      <input id="q" type="search" placeholder="Search title, venue, notes" autocomplete="off">
+      <div class="years" id="years" role="group" aria-label="Filter by year"></div>
+      <p class="status" id="status" hidden></p>
+      <ul class="list" id="list"></ul>
+    </aside>
+
+    <section class="stage-wrap">
+      <div class="stage" id="stage">
+        <p class="stage-empty" id="stage-empty">Select a recording.</p>
+        <video id="player" hidden controls playsinline preload="metadata"></video>
+        <p class="fallback" id="fallback" hidden></p>
+      </div>
+      <div class="now" id="now" hidden>
+        <h1 id="now-title"></h1>
+        <p id="now-meta"></p>
+        <p id="now-notes" hidden></p>
+        <a class="download" id="download" href="" download>Download</a>
+      </div>
+    </section>
+  </div>
+
+  <script src="/archive.js"></script>
+</body>
+</html>
