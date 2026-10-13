@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Gigs</title>
+  <title>Gigs · Vault</title>
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="description" content="Private archive of gig recordings.">
   <meta name="theme-color" content="#07060a">
@@ -17,14 +17,23 @@
   <div class="wash" aria-hidden="true">
     <span class="wash-a"></span>
     <span class="wash-b"></span>
+    <span class="grain"></span>
   </div>
 
-  <header class="bar">
-    <div class="brand">
-      <p class="mark">Gigs</p>
-      <p class="stats" id="stats" aria-live="polite">Loading recordings…</p>
+  <header class="hud">
+    <div class="hud-brand">
+      <p class="hud-mark">Gigs <span>vault</span></p>
+      <p class="hud-stats" id="stats" aria-live="polite">Loading recordings…</p>
     </div>
-    <div class="disk" id="disk" hidden>
+    <div class="hud-search">
+      <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
+        <path d="M16 16.5L20 20.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+      </svg>
+      <label class="visually-hidden" for="q">Search recordings</label>
+      <input id="q" type="search" placeholder="Search title, venue, notes" autocomplete="off" enterkeyhint="search">
+    </div>
+    <div class="hud-disk" id="disk" hidden>
       <div class="disk-track" role="meter" id="disk-meter" aria-label="Disk used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
         <span id="disk-bar"></span>
       </div>
@@ -33,26 +42,28 @@
   </header>
 
   <main class="shell">
-    <aside class="rail" id="rail">
-      <div class="search">
-        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
-          <path d="M16 16.5L20 20.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-        </svg>
-        <label class="visually-hidden" for="q">Search recordings</label>
-        <input id="q" type="search" placeholder="Search title, venue, notes" autocomplete="off" enterkeyhint="search">
-      </div>
-      <div class="years" id="years" role="group" aria-label="Filter by year"></div>
-      <div class="chips" id="chips" role="group" aria-label="Filter by tagging status">
-        <button type="button" class="chip" data-mode="all" aria-pressed="true">All clips</button>
-        <button type="button" class="chip" data-mode="untagged" aria-pressed="false">Needs tagging <span class="chip-count"></span></button>
+    <aside class="rail" id="rail" aria-label="Archive index">
+      <div class="views" id="views" role="group" aria-label="Archive views">
+        <button type="button" class="view" data-mode="all" aria-pressed="true">
+          <span class="view-name">Archive</span>
+        </button>
+        <button type="button" class="view" data-mode="untagged" aria-pressed="false">
+          <span class="view-name">Inbox</span>
+          <span class="view-count" id="inbox-count"></span>
+        </button>
       </div>
       <p class="inbox-note" id="inbox-note" hidden></p>
+      <div class="years" id="years" role="group" aria-label="Filter by year"></div>
       <p class="status" id="status" hidden></p>
-      <ul class="list" id="list"></ul>
+      <ol class="timeline" id="list"></ol>
+      <footer class="keys" aria-label="Keyboard shortcuts">
+        <span><kbd>T</kbd> tag clip</span>
+        <span><kbd>↑</kbd><kbd>↓</kbd> browse</span>
+        <span><kbd>Esc</kbd> close</span>
+      </footer>
     </aside>
 
-    <section class="stage-wrap" aria-label="Player">
+    <section class="screen" aria-label="Viewer">
       <div class="stage" id="stage">
         <p class="stage-empty" id="stage-empty">
           <span class="stage-mark" aria-hidden="true"></span>
@@ -62,21 +73,26 @@
         <p class="timecode" id="timecode" hidden>00:00</p>
         <p class="fallback" id="fallback" hidden></p>
       </div>
-      <div class="now" id="now" hidden>
-        <h1 id="now-title"></h1>
-        <div class="now-actions">
-          <button type="button" class="edit-toggle" id="edit-toggle" aria-expanded="false" aria-controls="editor">Edit</button>
-        <a class="download" id="download" href="" download>
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 4v11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-            <path d="M7.5 11.5L12 16l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path d="M5 19h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-          </svg>
-          Download
-        </a>
+
+      <article class="record" id="now" hidden>
+        <p class="record-kicker" id="now-kicker"></p>
+        <div class="record-head">
+          <h1 id="now-title"></h1>
+          <div class="record-actions">
+            <button type="button" class="btn-ghost" id="edit-toggle" aria-expanded="false" aria-controls="editor">Tag</button>
+            <a class="btn-ghost" id="download" href="" download>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 4v11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+                <path d="M7.5 11.5L12 16l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M5 19h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+              </svg>
+              Save
+            </a>
+          </div>
         </div>
-        <p id="now-meta"></p>
-        <p id="now-notes" hidden></p>
+        <p class="record-meta" id="now-meta"></p>
+        <p class="record-notes" id="now-notes" hidden></p>
+        <p class="up-next" id="up-next" hidden></p>
         <form class="editor" id="editor" hidden>
           <label class="wide">Title
             <input id="edit-title" name="title" required maxlength="500" autocomplete="off">
@@ -99,7 +115,7 @@
             <button type="button" id="edit-cancel">Cancel</button>
           </div>
         </form>
-      </div>
+      </article>
     </section>
   </main>
 
