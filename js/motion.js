@@ -40,10 +40,13 @@ if (!reduced && window.matchMedia('(pointer: fine)').matches) {
   });
 }
 
-// Let the 3D hero react when a terminal command runs.
+// Let the 3D scene react to terminal commands — pass the command through
+// so the scene can answer differently (top surges, uptime breathes, ...).
 const terminalInput = document.getElementById('terminal-input');
 terminalInput?.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && terminalInput.value.trim()) {
-    window.dispatchEvent(new CustomEvent('matt:terminal-command'));
+    window.dispatchEvent(new CustomEvent('matt:terminal-command', {
+      detail: { command: terminalInput.value.trim().toLowerCase() },
+    }));
   }
 });

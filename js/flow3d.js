@@ -1,7 +1,9 @@
-/* ===== Infrastructure flow field — Three.js hero background =====
- * Progressive enhancement: only runs if WebGL + CDN import succeed.
- * Respects prefers-reduced-motion, pauses offscreen, caps DPR for perf.
- * Theme: nodes = monitored hosts, edges = checks, packets = alerts/traffic.
+/* ===== Infrastructure flow field — scroll-driven 3D journey =====
+ * Fixed full-viewport canvas behind homepage content. Camera flies through
+ * waypoint moods as sections scroll by (hero -> focus -> projects -> about
+ * -> contact). Progressive enhancement: needs WebGL + CDN import; otherwise
+ * the CSS fallback stays. Respects prefers-reduced-motion (one static frame,
+ * no scroll reaction), pauses when tab hidden, caps DPR for perf.
  * No build step — loaded as ES module with importmap (three@0.160.0).
  */
 
@@ -17,7 +19,6 @@ const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true,
 renderer.setClearColor(0x000000, 0);
 
 const scene = new THREE.Scene();
-// Gentle perspective so the graph feels deep but text stays readable.
 const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 100);
 camera.position.set(0, 0.6, 11);
 
@@ -71,8 +72,7 @@ const nodeMat = new THREE.PointsMaterial({
   sizeAttenuation: true,
   depthWrite: false,
 });
-const points = new THREE.Points(nodeGeo, nodeMat);
-scene.add(points);
+scene.add(new THREE.Points(nodeGeo, nodeMat));
 
 // ---- Edges (checks) ----
 const edgePos = new Float32Array(edgePairs.length * 2 * 3);
@@ -116,10 +116,41 @@ function nodePos(i, out, time) {
   return out;
 }
 
+// ---- Scroll journey: section moods drive camera + scene targets ----
+const MOODS = {
+  hero:     { camZ: 11, camY: 0.6, rotY: 0, edge: 0.22, flow: 1.0, dim: 0.85 },
+  focus:    { camZ: 9.5, camY: 0.2, rotY: 0.35, edge: 0.16, flow: 0.7, dim: 0.4 },
+  projects: { camZ: 8, camY: -0.2, rotY: -0.3, edge: 0.3, flow: 1.5, dim: 0.5 },
+  about:    { camZ: 9.5, camY: 0.1, rotY: 0.25, edge: 0.2, flow: 0.9, dim: 0.4 },
+  contact:  { camZ: 11, camY: 0.6, rotY: 0, edge: 0.22, flow: 0.8, dim: 0.55 },
+};
+let target = { ...MOODS.hero };
+const current = { ...MOODS.hero };
+
+function sectionFor(el) {
+  if (el.classList.contains('hero')) return 'hero';
+  return el.id && MOODS[el.id] ? el.id : null;
+}
+
+if (!prefersReduced) {
+  const seen = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const mood = sectionFor(entry.target);
+      if (mood) {
+        target = { ...MOODS[mood] };
+        document.body.dataset.mood = mood;
+      }
+    });
+  }, { threshold: 0.25, rootMargin: '-20% 0px -20% 0px' });
+
+  // Hero section has class .hero (not id); the rest are ids.
+  document.querySelectorAll('main > section.hero, main section#focus, main section#projects, main section#about, main section#contact').forEach((el) => seen.observe(el));
+}
+
 function resize() {
-  const rect = canvas.getBoundingClientRect();
-  const w = Math.max(1, Math.floor(rect.width));
-  const h = Math.max(1, Math.floor(rect.height));
+  const w = Math.max(1, window.innerWidth);
+  const h = Math.max(1, window.innerHeight);
   const dpr = Math.min(window.devicePixelRatio || 1, isCoarse ? 1.5 : 2);
   renderer.setPixelRatio(dpr);
   renderer.setSize(w, h, false);
@@ -132,17 +163,22 @@ window.addEventListener('resize', resize, { passive: true });
 // Mouse parallax (desktop only, subtle — text stays readable).
 let mx = 0;
 let my = 0;
-if (!isCoarse) {
+if (!isCoarse && !prefersReduced) {
   window.addEventListener('pointermove', (e) => {
     mx = (e.clientX / window.innerWidth - 0.5) * 2;
     my = (e.clientY / window.innerHeight - 0.5) * 2;
   }, { passive: true });
 }
 
-// Pause when hero is offscreen.
+// Pause when tab hidden.
 let visible = true;
-new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }, { threshold: 0 }).observe(canvas);
-document.addEventListener('visibilitychange', () => { visible = !document.hidden && visible; });
+document.addEventListener('visibilitychange', () => { visible = !document.hidden; });
+
+// External impulses (terminal commands, HUD events) temporarily push targets.
+let impulse = null;
+window.addEventListener('matt:flow-impulse', (e) => {
+  impulse = { ...(e.detail || {}), until: performance.now() + 1200 };
+});
 
 const clock = new THREE.Clock();
 let staticFrameRendered = false;
@@ -152,19 +188,32 @@ function tick() {
   if (!visible) return;
   const time = clock.getElapsedTime();
 
-  // Drift camera gently; reduced-motion gets one static frame.
-  if (!prefersReduced) {
-    camera.position.x += ((mx * 0.7) - camera.position.x) * 0.03;
-    camera.position.y += ((0.6 - my * 0.5) - camera.position.y) * 0.03;
-    camera.lookAt(0, 0, 0);
-  } else if (staticFrameRendered) {
-    return;
+  if (prefersReduced && staticFrameRendered) return;
+
+  // Ease current mood toward target (and apply any short impulse).
+  const k = prefersReduced ? 1 : 0.04;
+  for (const key of ['camZ', 'camY', 'rotY', 'edge', 'flow', 'dim']) {
+    let goal = target[key];
+    if (impulse && performance.now() < impulse.until && impulse[key] !== undefined) goal = impulse[key];
+    current[key] += (goal - current[key]) * k;
   }
+  if (impulse && performance.now() >= impulse.until) impulse = null;
+
+  const t = prefersReduced ? 0 : time;
+
+  camera.position.x += ((mx * 0.7) - camera.position.x) * 0.03;
+  camera.position.y += ((current.camY - my * 0.5) - camera.position.y) * 0.03;
+  camera.position.z += (current.camZ - camera.position.z) * 0.03;
+  camera.lookAt(0, 0, 0);
+  camera.rotation.z += (current.rotY * 0.15 - camera.rotation.z) * 0.03;
+
+  edgeMat.opacity = current.edge;
+  canvas.style.setProperty('--flow-dim', current.dim.toFixed(3));
 
   const p = nodeGeo.attributes.position.array;
   const c = nodeGeo.attributes.color.array;
   for (let i = 0; i < nodes.length; i++) {
-    nodePos(i, tmpA, prefersReduced ? 0 : time);
+    nodePos(i, tmpA, t);
     p[i * 3] = tmpA.x; p[i * 3 + 1] = tmpA.y; p[i * 3 + 2] = tmpA.z;
     const col3 = nodes[i].hot ? COLORS.nodeHot : COLORS.node;
     c[i * 3] = col3.r; c[i * 3 + 1] = col3.g; c[i * 3 + 2] = col3.b;
@@ -173,20 +222,17 @@ function tick() {
   nodeGeo.attributes.color.needsUpdate = true;
 
   const ep = edgeGeo.attributes.position.array;
-  edgePairs.forEach(([a, b], k) => {
-    nodePos(a, tmpA, prefersReduced ? 0 : time);
-    nodePos(b, tmpB, prefersReduced ? 0 : time);
-    ep[k * 6] = tmpA.x; ep[k * 6 + 1] = tmpA.y; ep[k * 6 + 2] = tmpA.z;
-    ep[k * 6 + 3] = tmpB.x; ep[k * 6 + 4] = tmpB.y; ep[k * 6 + 5] = tmpB.z;
+  edgePairs.forEach(([a, b], idx) => {
+    nodePos(a, tmpA, t); nodePos(b, tmpB, t);
+    ep[idx * 6] = tmpA.x; ep[idx * 6 + 1] = tmpA.y; ep[idx * 6 + 2] = tmpA.z;
+    ep[idx * 6 + 3] = tmpB.x; ep[idx * 6 + 4] = tmpB.y; ep[idx * 6 + 5] = tmpB.z;
   });
   edgeGeo.attributes.position.needsUpdate = true;
 
-  const t = prefersReduced ? 0 : time;
+  const dt = prefersReduced ? 0 : 0.016 * current.flow;
   packets.forEach((pkt, i) => {
-    if (!prefersReduced) {
-      pkt.t += pkt.speed * 0.016;
-      if (pkt.t > 1) { pkt.t = 0; pkt.edge = Math.floor(Math.random() * edgePairs.length); }
-    }
+    pkt.t += pkt.speed * dt;
+    if (pkt.t > 1) { pkt.t = 0; pkt.edge = Math.floor(Math.random() * edgePairs.length); }
     const [a, b] = edgePairs[pkt.edge];
     nodePos(a, tmpA, t); nodePos(b, tmpB, t);
     dummy.position.lerpVectors(tmpA, tmpB, pkt.t);
@@ -196,10 +242,8 @@ function tick() {
   packetMesh.instanceMatrix.needsUpdate = true;
 
   alerts.forEach((al, i) => {
-    if (!prefersReduced) {
-      al.t += al.speed * 0.016;
-      if (al.t > 1) { al.t = 0; al.edge = Math.floor(Math.random() * edgePairs.length); }
-    }
+    al.t += al.speed * dt;
+    if (al.t > 1) { al.t = 0; al.edge = Math.floor(Math.random() * edgePairs.length); }
     const [a, b] = edgePairs[al.edge];
     nodePos(a, tmpA, t); nodePos(b, tmpB, t);
     dummy.position.lerpVectors(tmpA, tmpB, al.t);
@@ -215,9 +259,20 @@ function tick() {
 }
 tick();
 
-// Terminal activity kicks a pulse through the graph — the site reacts to input.
-window.addEventListener('matt:terminal-command', () => {
-  packetMat.opacity = 1;
-  edgeMat.opacity = 0.4;
-  setTimeout(() => { packetMat.opacity = 0.9; edgeMat.opacity = 0.22; }, 600);
+// Terminal commands land in the scene with different signatures:
+// busy commands surge the flows, info commands breathe, hiring is a party.
+window.addEventListener('matt:terminal-command', (e) => {
+  const cmd = (e.detail?.command || '').split(/\s+/)[0];
+  const first = (e.detail?.command || '').split(/\s+/).slice(0, 2).join(' ');
+  if (cmd === 'top' || cmd === 'htop' || cmd === 'ps') {
+    window.dispatchEvent(new CustomEvent('matt:flow-impulse', { detail: { edge: 0.45, flow: 2.6, camZ: current.camZ - 1.2 } }));
+  } else if (cmd === 'stats' || cmd === 'neofetch') {
+    window.dispatchEvent(new CustomEvent('matt:flow-impulse', { detail: { edge: 0.4, flow: 2.0, camZ: current.camZ - 0.8 } }));
+  } else if (cmd === 'uptime' || cmd === 'free' || cmd === 'df') {
+    window.dispatchEvent(new CustomEvent('matt:flow-impulse', { detail: { edge: 0.3, flow: 1.4 } }));
+  } else if (first === 'sudo hire' || cmd === 'hire') {
+    window.dispatchEvent(new CustomEvent('matt:flow-impulse', { detail: { edge: 0.5, flow: 3.0, camZ: current.camZ - 1.6 } }));
+  } else {
+    window.dispatchEvent(new CustomEvent('matt:flow-impulse', { detail: { edge: 0.35, flow: 1.8 } }));
+  }
 });
