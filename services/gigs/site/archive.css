@@ -252,6 +252,85 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
   line-height: 1.5;
 }
 
+.chips {
+  display: flex;
+  gap: 8px;
+  padding: 2px 2px 4px;
+}
+.chip {
+  flex: none;
+  padding: 7px 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--fill);
+  color: var(--muted);
+  transition: background 0.2s var(--ease), color 0.2s var(--ease), transform 0.15s var(--ease);
+}
+.chip[aria-pressed="true"] {
+  background: transparent;
+  border-color: var(--amber);
+  color: var(--text);
+  font-weight: 600;
+}
+.chip-count {
+  font-variant-numeric: tabular-nums;
+}
+.chip-count:not(:empty) {
+  display: inline-block;
+  min-width: 20px;
+  margin-left: 4px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--amber);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+@media (hover: hover) {
+  .chip:hover { background: var(--fill-strong); color: var(--text); }
+}
+.chip:active { transform: scale(0.97); }
+.chip:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+.chip:disabled { opacity: 0.45; }
+
+.inbox-note {
+  margin: 6px 4px 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.gig { margin-top: 14px; }
+.gig:first-child { margin-top: 6px; }
+.gig-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 0 12px 6px;
+}
+.gig-when {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 15px;
+}
+.gig-where { color: var(--text); font-size: 14px; }
+.gig-count { color: var(--muted); font-size: 12px; }
+.gig-auto {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.gig-clips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .list {
   list-style: none;
   margin: 6px 0 0;
@@ -358,6 +437,11 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
   font-weight: 600;
   letter-spacing: 0.08em;
 }
+.row-tag.warn {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 177, 90, 0.16);
+}
 
 .eq {
   display: none;
@@ -416,6 +500,10 @@ body.is-playing .eq i { animation-play-state: running; }
   transition: box-shadow 0.5s var(--ease);
 }
 .stage:has(#player:not([hidden])) { background: #000; }
+.stage.portrait {
+  width: min(100%, calc((100dvh - 400px) * 9 / 16));
+  aspect-ratio: 9 / 16;
+}
 body.is-playing .stage {
   box-shadow:
     0 0 0 1px rgba(255, 198, 140, 0.4),

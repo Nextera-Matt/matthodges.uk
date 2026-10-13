@@ -3,6 +3,8 @@
 
 Titles, venues, dates, and notes already stored in the catalog are kept.
 A sidecar next to a video (same name plus .json) overrides those fields.
+Clips with no date anywhere fall back to the file mtime (flagged
+dateSource "mtime") so phone footage still lands on the timeline.
 """
 
 from __future__ import annotations
@@ -132,6 +134,28 @@ def pick(parsed: dict[str, str], previous: dict, sidecar: dict[str, str], key: s
     return parsed[key]
 
 
+def pick_date(
+    parsed: dict[str, str], previous: dict, sidecar: dict[str, str], mtime: int
+) -> tuple[str, str]:
+    """Resolve a clip date and where it came from.
+
+    Precedence: sidecar (manual) > previous catalog value > filename >
+    file mtime. Phone clips usually arrive with no date in the name, so the
+    mtime fallback puts them on the timeline instead of in an undated pile.
+    The source flag lets the site badge auto dates until they are confirmed.
+    """
+    if "date" in sidecar:
+        return sidecar["date"], "manual"
+    previous_value = previous.get("date")
+    if isinstance(previous_value, str) and previous_value.strip():
+        source = previous.get("dateSource")
+        return previous_value.strip(), source if source in {"manual", "file", "mtime"} else "manual"
+    if parsed["date"]:
+        return parsed["date"], "file"
+    stamp = dt.datetime.fromtimestamp(mtime).date().isoformat()
+    return stamp, "mtime"
+
+
 def probe_duration(path: Path) -> float | None:
     ffprobe = shutil.which("ffprobe")
     if ffprobe is None:
@@ -184,11 +208,13 @@ def build_item(rel: str, path: Path, previous: dict) -> dict:
     duration = cached_duration(previous, size, mtime)
     if duration is None:
         duration = probe_duration(path)
+    date, date_source = pick_date(parsed, previous, sidecar, stat.st_mtime)
     item = {
         "file": rel,
         "title": pick(parsed, previous, sidecar, "title"),
         "venue": pick(parsed, previous, sidecar, "venue"),
-        "date": pick(parsed, previous, sidecar, "date"),
+        "date": date,
+        "dateSource": date_source,
         "notes": pick(parsed, previous, sidecar, "notes"),
         "bytes": size,
         "mtime": mtime,
