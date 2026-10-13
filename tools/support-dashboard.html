@@ -15,6 +15,8 @@
 <body>
   <div class="bg-grid" aria-hidden="true"></div>
   <div class="bg-glow" aria-hidden="true"></div>
+  <canvas id="flow3d" class="flow3d" aria-hidden="true"></canvas>
+  <div class="hero-fallback" aria-hidden="true"></div>
 
   <header id="header" class="scrolled">
     <div class="container nav">
@@ -75,6 +77,14 @@
 
   <script src="/js/main.js"></script>
   <script src="/js/motion.js"></script>
+  <script type="importmap">
+    { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+  </script>
+  <script type="module">
+    // Progressive enhancement: if WebGL/CDN fails, the CSS fallback stays.
+    try { await import('/js/flow3d.js'); document.body.classList.add('has-3d'); }
+    catch (err) { console.warn('3D disabled:', err?.message || err); }
+  </script>
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
