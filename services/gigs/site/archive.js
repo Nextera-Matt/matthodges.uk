@@ -9,6 +9,8 @@
   const railEl = document.getElementById("rail");
   const listEl = document.getElementById("list");
   const yearsEl = document.getElementById("years");
+  const chipsEl = document.getElementById("chips");
+  const inboxNoteEl = document.getElementById("inbox-note");
   const searchEl = document.getElementById("q");
   const statusEl = document.getElementById("status");
   const stage = document.getElementById("stage");
@@ -43,10 +45,22 @@
 
   let items = [];
   let year = "all";
+  let mode = "all";
   let currentFile = "";
   let animateList = true;
   let openedDate = "";
   let openedName = "";
+  let viewOrder = [];
+
+  function isUntagged(item) {
+    return !item.venue;
+  }
+
+  function groupKey(item) {
+    const date = typeof item.date === "string" && item.date ? item.date : "undated";
+    const venue = item.venue ? item.venue.toLowerCase() : "?";
+    return `${date}‖${venue}`;
+  }
 
   function extension(file) {
     const base = file.split("/").pop() || "";
@@ -116,6 +130,7 @@
 
   function matches(item) {
     if (year !== "all" && itemYear(item) !== year) return false;
+    if (mode === "untagged" && !isUntagged(item)) return false;
     const query = searchEl.value.trim().toLowerCase();
     if (!query) return true;
     const haystack = [item.title, item.venue, item.notes, item.file, item.date]
@@ -123,6 +138,10 @@
       .join(" ")
       .toLowerCase();
     return haystack.includes(query);
+  }
+
+  function untaggedCount() {
+    return items.filter(isUntagged).length;
   }
 
   function showMessage(text) {
@@ -206,7 +225,9 @@
 
   function paintNow(item) {
     nowTitle.textContent = item.title || item.file;
-    nowMeta.textContent = [formatDate(item.date), details(item)].filter(Boolean).join(" · ");
+    const bits = [formatDate(item.date), details(item)].filter(Boolean);
+    if (item.dateSource === "mtime") bits.push("date from file");
+    nowMeta.textContent = bits.join(" · ");
     nowNotes.hidden = !item.notes;
     nowNotes.textContent = item.notes || "";
     const url = mediaUrl(item.file);
@@ -214,9 +235,17 @@
     downloadEl.setAttribute("download", item.file.split("/").pop() || "recording");
   }
 
+  function fitStage() {
+    const portrait = !player.hidden
+      && player.videoHeight > 0
+      && player.videoHeight > player.videoWidth;
+    stage.classList.toggle("portrait", portrait);
+  }
+
   function loadMedia(item) {
     fallback.hidden = true;
     timecode.hidden = true;
+    stage.classList.remove("portrait");
     setPlaying(false);
     if (PLAYABLE.has(extension(item.file))) {
       player.hidden = false;
@@ -303,96 +332,172 @@
     selectItem(item, { keepPlace: true });
   }
 
+  function clipRow(item, index, showYear) {
+    const li = document.createElement("li");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = animateList ? "row rise" : "row";
+    if (animateList) button.style.animationDelay = `${Math.min(index, 16) * 35}ms`;
+    button.setAttribute("aria-pressed", item.file === currentFile ? "true" : "false");
+
+    const date = document.createElement("span");
+    date.className = "row-date";
+    const parts = dateParts(item.date);
+    const day = document.createElement("span");
+    day.className = "row-day";
+    day.textContent = parts ? parts.day : "—";
+    date.appendChild(day);
+    if (parts) {
+      const mon = document.createElement("span");
+      mon.className = "row-mon";
+      mon.textContent = parts.mon;
+      date.appendChild(mon);
+      if (showYear) {
+        const y = document.createElement("span");
+        y.className = "row-year";
+        y.textContent = parts.year;
+        date.appendChild(y);
+      }
+    }
+
+    const body = document.createElement("span");
+    body.className = "row-body";
+    const titleLine = document.createElement("span");
+    titleLine.className = "row-titleline";
+    const eq = document.createElement("span");
+    eq.className = "eq";
+    eq.setAttribute("aria-hidden", "true");
+    for (let i = 0; i < 3; i += 1) eq.appendChild(document.createElement("i"));
+    const title = document.createElement("span");
+    title.className = "row-title";
+    title.textContent = item.title || item.file;
+    titleLine.append(eq, title);
+    const meta = document.createElement("span");
+    meta.className = "row-meta";
+    meta.textContent = rowMeta(item);
+    body.append(titleLine, meta);
+
+    button.append(date, body);
+    const duration = formatDuration(item.duration);
+    const ext = extension(item.file);
+    const offline = !PLAYABLE.has(ext);
+    const side = document.createElement("span");
+    side.className = "row-side";
+    if (isUntagged(item)) {
+      const tag = document.createElement("span");
+      tag.className = "row-tag warn";
+      tag.textContent = "NEEDS TAG";
+      side.appendChild(tag);
+    }
+    if (offline) {
+      const tag = document.createElement("span");
+      tag.className = "row-tag";
+      tag.textContent = ext ? ext.toUpperCase() : "FILE";
+      side.appendChild(tag);
+    }
+    if (duration) {
+      const dur = document.createElement("span");
+      dur.className = "row-dur";
+      dur.textContent = duration;
+      side.appendChild(dur);
+    }
+    if (side.childElementCount > 0) button.appendChild(side);
+
+    button.addEventListener("click", () => selectItem(item));
+    li.appendChild(button);
+    return li;
+  }
+
+  function gigRuntime(gigItems) {
+    const total = gigItems.reduce((sum, entry) => sum + (Number(entry.duration) || 0), 0);
+    return formatDuration(total);
+  }
+
+  function renderChips() {
+    const untagged = untaggedCount();
+    chipsEl.querySelectorAll(".chip").forEach((button) => {
+      const value = button.dataset.mode || "all";
+      button.setAttribute("aria-pressed", value === mode ? "true" : "false");
+      if (value === "untagged") {
+        button.querySelector(".chip-count").textContent = untagged > 0 ? String(untagged) : "";
+        button.disabled = untagged === 0 && mode !== "untagged";
+      }
+    });
+    inboxNoteEl.hidden = untagged === 0;
+    if (untagged > 0) {
+      inboxNoteEl.textContent = untagged === 1
+        ? "1 clip waiting for a name and venue."
+        : `${untagged} clips waiting for names and venues. Press T on any clip to tag it.`;
+    }
+  }
+
   function renderList() {
     const scrollTop = railEl.scrollTop;
     const visible = items.filter(matches);
+    viewOrder = visible.map((item) => item.file);
     const totalBytes = items.reduce((sum, item) => sum + (Number(item.bytes) || 0), 0);
-    const filtering = year !== "all" || searchEl.value.trim() !== "";
+    const filtering = year !== "all" || mode !== "all" || searchEl.value.trim() !== "";
     if (items.length === 0) {
       statsEl.textContent = "No recordings yet";
       stageCopy.textContent = "Nothing to play yet.";
+    } else if (mode === "untagged") {
+      statsEl.textContent = `${visible.length} to tag · ${formatBytes(totalBytes)} on disk`;
     } else if (filtering) {
       statsEl.textContent = `${visible.length} of ${items.length} · ${formatBytes(totalBytes)}`;
     } else {
-      statsEl.textContent = `${items.length} recording${items.length === 1 ? "" : "s"} · ${formatBytes(totalBytes)}`;
+      const gigs = new Set(items.map(groupKey)).size;
+      statsEl.textContent = `${items.length} clips · ${gigs} gig${gigs === 1 ? "" : "s"} · ${formatBytes(totalBytes)}`;
     }
     statusEl.hidden = visible.length > 0;
     statusEl.textContent = items.length === 0
       ? "No recordings yet."
       : "Nothing matches that search.";
+    renderChips();
     const showYear = year === "all";
     listEl.replaceChildren();
-    visible.forEach((item, index) => {
-      const li = document.createElement("li");
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = animateList ? "row rise" : "row";
-      if (animateList) button.style.animationDelay = `${Math.min(index, 16) * 35}ms`;
-      button.setAttribute("aria-pressed", item.file === currentFile ? "true" : "false");
-
-      const date = document.createElement("span");
-      date.className = "row-date";
-      const parts = dateParts(item.date);
-      const day = document.createElement("span");
-      day.className = "row-day";
-      day.textContent = parts ? parts.day : "—";
-      date.appendChild(day);
-      if (parts) {
-        const mon = document.createElement("span");
-        mon.className = "row-mon";
-        mon.textContent = parts.mon;
-        date.appendChild(mon);
-        if (showYear) {
-          const y = document.createElement("span");
-          y.className = "row-year";
-          y.textContent = parts.year;
-          date.appendChild(y);
+    if (mode === "untagged") {
+      visible.forEach((item, index) => listEl.appendChild(clipRow(item, index, showYear)));
+    } else {
+      const groups = new Map();
+      visible.forEach((item) => {
+        const key = groupKey(item);
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(item);
+      });
+      let index = 0;
+      groups.forEach((gigItems) => {
+        const first = gigItems[0];
+        const gig = document.createElement("li");
+        gig.className = "gig";
+        const head = document.createElement("div");
+        head.className = "gig-head";
+        const when = document.createElement("p");
+        when.className = "gig-when";
+        when.textContent = formatDate(first.date);
+        const where = document.createElement("p");
+        where.className = "gig-where";
+        where.textContent = first.venue || "Unknown venue";
+        const count = document.createElement("p");
+        count.className = "gig-count";
+        const runtime = gigRuntime(gigItems);
+        count.textContent = `${gigItems.length} clip${gigItems.length === 1 ? "" : "s"}${runtime ? ` · ${runtime}` : ""}`;
+        head.append(when, where, count);
+        if (gigItems.every((entry) => entry.dateSource === "mtime")) {
+          const auto = document.createElement("p");
+          auto.className = "gig-auto";
+          auto.textContent = "date from file";
+          head.appendChild(auto);
         }
-      }
-
-      const body = document.createElement("span");
-      body.className = "row-body";
-      const titleLine = document.createElement("span");
-      titleLine.className = "row-titleline";
-      const eq = document.createElement("span");
-      eq.className = "eq";
-      eq.setAttribute("aria-hidden", "true");
-      for (let i = 0; i < 3; i += 1) eq.appendChild(document.createElement("i"));
-      const title = document.createElement("span");
-      title.className = "row-title";
-      title.textContent = item.title || item.file;
-      titleLine.append(eq, title);
-      const meta = document.createElement("span");
-      meta.className = "row-meta";
-      meta.textContent = rowMeta(item);
-      body.append(titleLine, meta);
-
-      button.append(date, body);
-      const duration = formatDuration(item.duration);
-      const ext = extension(item.file);
-      const offline = !PLAYABLE.has(ext);
-      if (duration || offline) {
-        const side = document.createElement("span");
-        side.className = "row-side";
-        if (offline) {
-          const tag = document.createElement("span");
-          tag.className = "row-tag";
-          tag.textContent = ext ? ext.toUpperCase() : "FILE";
-          side.appendChild(tag);
-        }
-        if (duration) {
-          const dur = document.createElement("span");
-          dur.className = "row-dur";
-          dur.textContent = duration;
-          side.appendChild(dur);
-        }
-        button.appendChild(side);
-      }
-
-      button.addEventListener("click", () => selectItem(item));
-      li.appendChild(button);
-      listEl.appendChild(li);
-    });
+        const clips = document.createElement("ul");
+        clips.className = "gig-clips";
+        gigItems.forEach((item) => {
+          clips.appendChild(clipRow(item, index, showYear));
+          index += 1;
+        });
+        gig.append(head, clips);
+        listEl.appendChild(gig);
+      });
+    }
     renderYears();
     railEl.scrollTop = scrollTop;
     animateList = false;
@@ -408,15 +513,34 @@
   });
   player.addEventListener("play", () => setPlaying(true));
   player.addEventListener("pause", () => setPlaying(false));
-  player.addEventListener("ended", () => setPlaying(false));
+  player.addEventListener("ended", () => {
+    setPlaying(false);
+    // Review flow: roll on to the next clip in the current view.
+    const at = viewOrder.indexOf(currentFile);
+    if (at !== -1 && at + 1 < viewOrder.length) {
+      const next = items.find((entry) => entry.file === viewOrder[at + 1]);
+      if (next) selectItem(next, { scrollList: true });
+    }
+  });
   player.addEventListener("timeupdate", paintTimecode);
-  player.addEventListener("loadedmetadata", paintTimecode);
+  player.addEventListener("loadedmetadata", () => {
+    paintTimecode();
+    fitStage();
+  });
   player.addEventListener("emptied", () => {
     timecode.hidden = true;
     setPlaying(false);
   });
 
   searchEl.addEventListener("input", () => renderList());
+
+  chipsEl.addEventListener("click", (event) => {
+    const button = event.target.closest(".chip");
+    if (!button || button.disabled) return;
+    mode = button.dataset.mode === "untagged" ? "untagged" : "all";
+    animateList = true;
+    renderList();
+  });
 
   editToggle.addEventListener("click", () => {
     if (editor.hidden) openEditor();
@@ -456,6 +580,16 @@
           throw new Error("Could not save that recording.");
         }
         replaceItem(previousFile, payload);
+        if (mode === "untagged") {
+          // Inbox flow: tagging removes the clip from this view, so move on.
+          animateList = true;
+          const next = items.filter(matches)[0];
+          if (next) selectItem(next, { keepPlace: true, scrollList: true });
+          else {
+            mode = "all";
+            renderList();
+          }
+        }
       })
       .catch((error) => {
         editorError.hidden = false;
@@ -478,6 +612,15 @@
       || event.target instanceof HTMLInputElement
       || event.target instanceof HTMLTextAreaElement
     ) return;
+    if (event.key === "t" || event.key === "T") {
+      // Quick-tag the clip under review (or the first visible one).
+      const item = items.find((entry) => entry.file === currentFile)
+        || items.filter(matches)[0];
+      if (!item) return;
+      if (item.file !== currentFile) selectItem(item, { keepPlace: true });
+      openEditor();
+      return;
+    }
     if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
     const visible = items.filter(matches);
     if (!visible.length) return;
