@@ -9,7 +9,8 @@
   const railEl = document.getElementById("rail");
   const listEl = document.getElementById("list");
   const yearsEl = document.getElementById("years");
-  const chipsEl = document.getElementById("chips");
+  const viewsEl = document.getElementById("views");
+  const inboxCountEl = document.getElementById("inbox-count");
   const inboxNoteEl = document.getElementById("inbox-note");
   const searchEl = document.getElementById("q");
   const statusEl = document.getElementById("status");
@@ -20,9 +21,11 @@
   const timecode = document.getElementById("timecode");
   const fallback = document.getElementById("fallback");
   const nowEl = document.getElementById("now");
+  const nowKicker = document.getElementById("now-kicker");
   const nowTitle = document.getElementById("now-title");
   const nowMeta = document.getElementById("now-meta");
   const nowNotes = document.getElementById("now-notes");
+  const upNextEl = document.getElementById("up-next");
   const downloadEl = document.getElementById("download");
   const editToggle = document.getElementById("edit-toggle");
   const editor = document.getElementById("editor");
@@ -35,32 +38,22 @@
   const editCancel = document.getElementById("edit-cancel");
   const editorError = document.getElementById("editor-error");
 
+  const phoneQuery = window.matchMedia("(max-width: 900px)");
   const dateFormat = new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
     month: "short",
     year: "numeric",
   });
   const monthFormat = new Intl.DateTimeFormat("en-GB", { month: "short" });
-  const phoneQuery = window.matchMedia("(max-width: 800px)");
 
   let items = [];
   let year = "all";
   let mode = "all";
   let currentFile = "";
+  let viewOrder = [];
   let animateList = true;
   let openedDate = "";
   let openedName = "";
-  let viewOrder = [];
-
-  function isUntagged(item) {
-    return !item.venue;
-  }
-
-  function groupKey(item) {
-    const date = typeof item.date === "string" && item.date ? item.date : "undated";
-    const venue = item.venue ? item.venue.toLowerCase() : "?";
-    return `${date}‖${venue}`;
-  }
 
   function extension(file) {
     const base = file.split("/").pop() || "";
@@ -128,6 +121,23 @@
     return typeof item.date === "string" && item.date.length >= 4 ? item.date.slice(0, 4) : "";
   }
 
+  function isUntagged(item) {
+    return !item.venue || item.venue.trim() === "";
+  }
+
+  function groupKey(item) {
+    return `${item.date || "undated"} ${(item.venue || "").trim().toLowerCase()}`;
+  }
+
+  function untaggedCount() {
+    return items.filter(isUntagged).length;
+  }
+
+  function totalRuntime(list) {
+    const total = list.reduce((sum, entry) => sum + (Number(entry.duration) || 0), 0);
+    return formatDuration(total);
+  }
+
   function matches(item) {
     if (year !== "all" && itemYear(item) !== year) return false;
     if (mode === "untagged" && !isUntagged(item)) return false;
@@ -138,10 +148,6 @@
       .join(" ")
       .toLowerCase();
     return haystack.includes(query);
-  }
-
-  function untaggedCount() {
-    return items.filter(isUntagged).length;
   }
 
   function showMessage(text) {
@@ -162,6 +168,24 @@
     diskMeter.setAttribute("aria-valuenow", String(Math.round(usedPct)));
     diskMeter.classList.toggle("tight", disk.free / disk.total < 0.1);
     diskLabel.textContent = `${formatBytes(disk.free)} free of ${formatBytes(disk.total)}`;
+  }
+
+  function renderViews() {
+    const untagged = untaggedCount();
+    viewsEl.querySelectorAll(".view").forEach((button) => {
+      const value = button.dataset.mode || "all";
+      button.setAttribute("aria-pressed", value === mode ? "true" : "false");
+      if (value === "untagged") {
+        inboxCountEl.textContent = untagged > 0 ? String(untagged) : "";
+        button.disabled = untagged === 0 && mode !== "untagged";
+      }
+    });
+    inboxNoteEl.hidden = untagged === 0;
+    if (untagged > 0) {
+      inboxNoteEl.textContent = untagged === 1
+        ? "1 clip waiting for a name and venue."
+        : `${untagged} clips waiting for names and venues. Press T on any clip to tag it.`;
+    }
   }
 
   function renderYears() {
@@ -215,24 +239,49 @@
       timecode.hidden = true;
       return;
     }
-    const now = formatClock(player.currentTime);
-    const end = Number.isFinite(player.duration) && player.duration > 0
-      ? formatClock(player.duration)
+    const current = formatClock(player.currentTime);
+    const total = Number.isFinite(player.duration) && player.duration > 0
+      ? ` / ${formatClock(player.duration)}`
       : "";
     timecode.hidden = false;
-    timecode.textContent = end ? `${now} / ${end}` : now;
+    timecode.textContent = `${current}${total}`;
   }
 
   function paintNow(item) {
+    nowKicker.textContent = isUntagged(item) ? "Needs tagging" : (item.venue || "Unknown venue");
     nowTitle.textContent = item.title || item.file;
-    const bits = [formatDate(item.date), details(item)].filter(Boolean);
-    if (item.dateSource === "mtime") bits.push("date from file");
-    nowMeta.textContent = bits.join(" · ");
+    nowMeta.replaceChildren();
+    const bits = [formatDate(item.date)];
+    const extra = details(item);
+    if (extra) bits.push(extra);
+    nowMeta.append(bits.join(" · "));
+    if (item.dateSource === "mtime") {
+      const auto = document.createElement("span");
+      auto.className = "auto";
+      auto.textContent = " · date from file";
+      nowMeta.appendChild(auto);
+    }
     nowNotes.hidden = !item.notes;
     nowNotes.textContent = item.notes || "";
     const url = mediaUrl(item.file);
     downloadEl.href = url;
     downloadEl.setAttribute("download", item.file.split("/").pop() || "recording");
+    paintUpNext();
+  }
+
+  function paintUpNext() {
+    const at = viewOrder.indexOf(currentFile);
+    const next = at !== -1 && at + 1 < viewOrder.length
+      ? items.find((entry) => entry.file === viewOrder[at + 1])
+      : null;
+    upNextEl.hidden = !next;
+    upNextEl.replaceChildren();
+    if (next) {
+      upNextEl.append("Up next · ");
+      const strong = document.createElement("strong");
+      strong.textContent = next.title || next.file;
+      upNextEl.appendChild(strong);
+    }
   }
 
   function fitStage() {
@@ -343,46 +392,51 @@
     const date = document.createElement("span");
     date.className = "row-date";
     const parts = dateParts(item.date);
-    const day = document.createElement("span");
-    day.className = "row-day";
-    day.textContent = parts ? parts.day : "—";
-    date.appendChild(day);
     if (parts) {
+      const day = document.createElement("span");
+      day.className = "row-day";
+      day.textContent = parts.day;
       const mon = document.createElement("span");
       mon.className = "row-mon";
       mon.textContent = parts.mon;
-      date.appendChild(mon);
+      date.append(day, mon);
       if (showYear) {
-        const y = document.createElement("span");
-        y.className = "row-year";
-        y.textContent = parts.year;
-        date.appendChild(y);
+        const yr = document.createElement("span");
+        yr.className = "row-year";
+        yr.textContent = parts.year;
+        date.appendChild(yr);
       }
+    } else {
+      const day = document.createElement("span");
+      day.className = "row-day";
+      day.textContent = "–";
+      date.appendChild(day);
     }
 
-    const body = document.createElement("span");
-    body.className = "row-body";
-    const titleLine = document.createElement("span");
-    titleLine.className = "row-titleline";
-    const eq = document.createElement("span");
-    eq.className = "eq";
-    eq.setAttribute("aria-hidden", "true");
-    for (let i = 0; i < 3; i += 1) eq.appendChild(document.createElement("i"));
+    const main = document.createElement("span");
+    main.className = "row-main";
     const title = document.createElement("span");
     title.className = "row-title";
     title.textContent = item.title || item.file;
-    titleLine.append(eq, title);
     const meta = document.createElement("span");
     meta.className = "row-meta";
     meta.textContent = rowMeta(item);
-    body.append(titleLine, meta);
+    main.append(title, meta);
 
-    button.append(date, body);
-    const duration = formatDuration(item.duration);
-    const ext = extension(item.file);
-    const offline = !PLAYABLE.has(ext);
     const side = document.createElement("span");
     side.className = "row-side";
+    const eq = document.createElement("span");
+    eq.className = "eq";
+    eq.setAttribute("aria-hidden", "true");
+    eq.append(
+      document.createElement("i"),
+      document.createElement("i"),
+      document.createElement("i"),
+      document.createElement("i"),
+    );
+    side.appendChild(eq);
+    const ext = extension(item.file);
+    const offline = !PLAYABLE.has(ext);
     if (isUntagged(item)) {
       const tag = document.createElement("span");
       tag.className = "row-tag warn";
@@ -391,68 +445,66 @@
     }
     if (offline) {
       const tag = document.createElement("span");
-      tag.className = "row-tag";
+      tag.className = "row-tag off";
       tag.textContent = ext ? ext.toUpperCase() : "FILE";
       side.appendChild(tag);
     }
+    const duration = formatDuration(item.duration);
     if (duration) {
       const dur = document.createElement("span");
       dur.className = "row-dur";
       dur.textContent = duration;
       side.appendChild(dur);
     }
-    if (side.childElementCount > 0) button.appendChild(side);
 
+    button.append(date, main, side);
     button.addEventListener("click", () => selectItem(item));
     li.appendChild(button);
     return li;
   }
 
   function gigRuntime(gigItems) {
-    const total = gigItems.reduce((sum, entry) => sum + (Number(entry.duration) || 0), 0);
-    return formatDuration(total);
+    return totalRuntime(gigItems);
   }
 
-  function renderChips() {
-    const untagged = untaggedCount();
-    chipsEl.querySelectorAll(".chip").forEach((button) => {
-      const value = button.dataset.mode || "all";
-      button.setAttribute("aria-pressed", value === mode ? "true" : "false");
-      if (value === "untagged") {
-        button.querySelector(".chip-count").textContent = untagged > 0 ? String(untagged) : "";
-        button.disabled = untagged === 0 && mode !== "untagged";
-      }
-    });
-    inboxNoteEl.hidden = untagged === 0;
-    if (untagged > 0) {
-      inboxNoteEl.textContent = untagged === 1
-        ? "1 clip waiting for a name and venue."
-        : `${untagged} clips waiting for names and venues. Press T on any clip to tag it.`;
+  function renderStats(visible) {
+    const totalBytes = items.reduce((sum, item) => sum + (Number(item.bytes) || 0), 0);
+    const size = formatBytes(totalBytes);
+    const filtering = year !== "all" || mode !== "all" || searchEl.value.trim() !== "";
+    if (items.length === 0) {
+      statsEl.textContent = "No recordings yet";
+      stageCopy.textContent = "Nothing to play yet.";
+      return;
     }
+    if (mode === "untagged") {
+      statsEl.textContent = `${visible.length} to tag${size ? ` · ${size} on disk` : ""}`;
+      return;
+    }
+    if (filtering) {
+      statsEl.textContent = `${visible.length} of ${items.length}${size ? ` · ${size}` : ""}`;
+      return;
+    }
+    const gigs = new Set(items.map(groupKey)).size;
+    const runtime = totalRuntime(items);
+    const bits = [
+      `${items.length} clip${items.length === 1 ? "" : "s"}`,
+      `${gigs} gig${gigs === 1 ? "" : "s"}`,
+    ];
+    if (runtime) bits.push(runtime);
+    if (size) bits.push(size);
+    statsEl.textContent = bits.join(" · ");
   }
 
   function renderList() {
     const scrollTop = railEl.scrollTop;
     const visible = items.filter(matches);
     viewOrder = visible.map((item) => item.file);
-    const totalBytes = items.reduce((sum, item) => sum + (Number(item.bytes) || 0), 0);
-    const filtering = year !== "all" || mode !== "all" || searchEl.value.trim() !== "";
-    if (items.length === 0) {
-      statsEl.textContent = "No recordings yet";
-      stageCopy.textContent = "Nothing to play yet.";
-    } else if (mode === "untagged") {
-      statsEl.textContent = `${visible.length} to tag · ${formatBytes(totalBytes)} on disk`;
-    } else if (filtering) {
-      statsEl.textContent = `${visible.length} of ${items.length} · ${formatBytes(totalBytes)}`;
-    } else {
-      const gigs = new Set(items.map(groupKey)).size;
-      statsEl.textContent = `${items.length} clips · ${gigs} gig${gigs === 1 ? "" : "s"} · ${formatBytes(totalBytes)}`;
-    }
+    renderStats(visible);
     statusEl.hidden = visible.length > 0;
     statusEl.textContent = items.length === 0
       ? "No recordings yet."
       : "Nothing matches that search.";
-    renderChips();
+    renderViews();
     const showYear = year === "all";
     listEl.replaceChildren();
     if (mode === "untagged") {
@@ -477,18 +529,18 @@
         const where = document.createElement("p");
         where.className = "gig-where";
         where.textContent = first.venue || "Unknown venue";
-        const count = document.createElement("p");
-        count.className = "gig-count";
+        const sub = document.createElement("p");
+        sub.className = "gig-sub";
         const runtime = gigRuntime(gigItems);
-        count.textContent = `${gigItems.length} clip${gigItems.length === 1 ? "" : "s"}${runtime ? ` · ${runtime}` : ""}`;
-        head.append(when, where, count);
+        sub.textContent = `${gigItems.length} clip${gigItems.length === 1 ? "" : "s"}${runtime ? ` · ${runtime}` : ""}`;
+        head.append(when, where, sub);
         if (gigItems.every((entry) => entry.dateSource === "mtime")) {
-          const auto = document.createElement("p");
+          const auto = document.createElement("span");
           auto.className = "gig-auto";
-          auto.textContent = "date from file";
-          head.appendChild(auto);
+          auto.textContent = " · date from file";
+          sub.appendChild(auto);
         }
-        const clips = document.createElement("ul");
+        const clips = document.createElement("ol");
         clips.className = "gig-clips";
         gigItems.forEach((item) => {
           clips.appendChild(clipRow(item, index, showYear));
@@ -501,6 +553,7 @@
     renderYears();
     railEl.scrollTop = scrollTop;
     animateList = false;
+    if (currentFile) paintUpNext();
   }
 
   player.addEventListener("error", () => {
@@ -534,8 +587,8 @@
 
   searchEl.addEventListener("input", () => renderList());
 
-  chipsEl.addEventListener("click", (event) => {
-    const button = event.target.closest(".chip");
+  viewsEl.addEventListener("click", (event) => {
+    const button = event.target.closest(".view");
     if (!button || button.disabled) return;
     mode = button.dataset.mode === "untagged" ? "untagged" : "all";
     animateList = true;
@@ -643,6 +696,7 @@
       items = Array.isArray(catalog.items)
         ? catalog.items.filter((item) => item && typeof item.file === "string" && !item.file.includes(".."))
         : [];
+      sortItems();
       renderDisk(catalog.disk);
       renderList();
     })
@@ -650,8 +704,5 @@
       showMessage("The catalog is not on the server yet.");
       statusEl.hidden = false;
       statusEl.textContent = "Copy the recordings onto the disk, then rebuild the catalog. The site should ask for a password before it opens.";
-    })
-    .finally(() => {
-      document.body.classList.add("is-ready");
     });
 })();
