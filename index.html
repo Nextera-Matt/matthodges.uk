@@ -24,6 +24,22 @@
 <body>
   <div class="bg-grid" aria-hidden="true"></div>
   <div class="bg-glow" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <div id="boot" class="boot" role="status" aria-label="Loading">
+    <div class="boot-box">
+      <div class="boot-title">matt@portfolio:~</div>
+      <div id="boot-log" class="boot-log"></div>
+    </div>
+  </div>
+
+  <div class="hud" aria-hidden="true">
+    <span id="hud-uptime">up 00:00:00</span>
+    <span class="hud-sep">·</span>
+    <span id="hud-flow">flow: …</span>
+    <span class="hud-sep">·</span>
+    <span id="hud-mood">sec: hero</span>
+  </div>
 
   <header id="header">
     <div class="container nav">
@@ -339,6 +355,7 @@
 
   <script src="/js/main.js"></script>
   <script src="/js/motion.js"></script>
+  <script src="/js/hud.js"></script>
   <script type="importmap">
     { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
   </script>

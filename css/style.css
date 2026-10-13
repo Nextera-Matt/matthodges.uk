@@ -450,18 +450,17 @@ footer { padding: 40px 0; border-top: 1px solid var(--border); background: var(-
 .card { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
 .mt-2 { margin-top: 32px; }
 
-/* ===== 3D hero + motion system (redesign/3d-flows) ===== */
-.hero-3d { position: relative; overflow: clip; }
+/* ===== 3D journey + motion system (redesign/3d-flows) ===== */
+.hero-3d { position: relative; }
 .flow3d {
-  position: absolute; inset: 0; width: 100%; height: 100%;
+  position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1;
   opacity: 0; transition: opacity 1.2s ease;
-  mask-image: linear-gradient(to bottom, black 55%, transparent 98%);
 }
-body.has-3d .flow3d { opacity: 0.85; }
+body.has-3d .flow3d { opacity: var(--flow-dim, 0.85); }
 .hero-3d .hero-content { position: relative; z-index: 1; }
 .hero-3d .terminal { background: color-mix(in srgb, var(--bg-elev) 82%, transparent); backdrop-filter: blur(14px); }
 .hero-fallback {
-  position: absolute; inset: 0; z-index: 0;
+  position: fixed; inset: 0; z-index: -1;
   background:
     radial-gradient(ellipse 60% 45% at 70% 20%, rgba(74, 156, 106, 0.16), transparent 70%),
     radial-gradient(ellipse 45% 40% at 20% 75%, rgba(6, 182, 212, 0.12), transparent 70%);
@@ -473,9 +472,38 @@ body.has-3d .hero-fallback { display: none; }
   transform: scaleX(0); transform-origin: left;
 }
 .tilt { transform-style: preserve-3d; will-change: transform; }
+
+/* ===== Ops HUD: boot, status bar, scanlines ===== */
+.scanlines {
+  position: fixed; inset: 0; z-index: 150; pointer-events: none; opacity: 0.5;
+  background: repeating-linear-gradient(to bottom, transparent 0 3px, rgba(0, 0, 0, 0.12) 3px 4px);
+}
+.boot {
+  position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center;
+  background: rgba(5, 7, 10, 0.92); backdrop-filter: blur(6px);
+  transition: opacity 0.5s ease; cursor: pointer;
+}
+.boot.done { opacity: 0; pointer-events: none; }
+.boot-box {
+  width: min(440px, 90vw); padding: 24px 28px;
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius);
+  font-family: var(--font-mono); font-size: 13px; line-height: 2; color: var(--text-dim);
+}
+.boot-title { color: var(--text); margin-bottom: 8px; }
+.boot-line { white-space: nowrap; }
+.hud {
+  position: fixed; right: 16px; bottom: 14px; z-index: 160;
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-dim);
+  background: color-mix(in srgb, var(--bg-elev) 85%, transparent);
+  border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px;
+  display: flex; gap: 8px; backdrop-filter: blur(10px);
+}
+.hud-sep { opacity: 0.5; }
+@media (max-width: 700px) { .hud { display: none; } }
 @media (prefers-reduced-motion: reduce) {
   .flow3d { display: none; }
   .scroll-progress { display: none; }
+  .scanlines { display: none; }
 }
 
 /* ===== Reduced Motion: Background Animations ===== */@media (prefers-reduced-motion: reduce) {
