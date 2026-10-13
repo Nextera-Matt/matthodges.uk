@@ -52,8 +52,11 @@
   </header>
 
   <main>
-    <section class="hero container">
+    <section class="hero container hero-3d">
+      <canvas id="flow3d" class="flow3d" aria-hidden="true"></canvas>
+      <div class="hero-fallback" aria-hidden="true"></div>
       <div class="hero-content fade-up">
+        <div class="hero-badge"><span class="dot"></span>Systems Administrator · moving into DevOps</div>
         <h1>I build <span class="gradient">reliable</span><br>infrastructure</h1>
         <p class="lede">Systems Administrator at Fixter, moving into DevOps. Automation, infrastructure, and reliability — building on 6 years of technical support, customer support, and Linux systems engineering.</p>
         <div class="hero-cta">
@@ -335,5 +338,14 @@
   </footer>
 
   <script src="/js/main.js"></script>
+  <script src="/js/motion.js"></script>
+  <script type="importmap">
+    { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+  </script>
+  <script type="module">
+    // Progressive enhancement: if WebGL/CDN fails, the CSS fallback stays.
+    try { await import('/js/flow3d.js'); document.body.classList.add('has-3d'); }
+    catch (err) { console.warn('3D hero disabled:', err?.message || err); }
+  </script>
 </body>
 </html>
