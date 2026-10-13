@@ -6,119 +6,201 @@
   <title>Gigs · Vault</title>
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="description" content="Private archive of gig recordings.">
-  <meta name="theme-color" content="#07060a">
+  <meta name="theme-color" content="#0b0908">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23140e0a'/%3E%3Cpath d='M13 9.5l11 6.5-11 6.5z' fill='%23ffb15a'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Outfit:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/archive.css">
 </head>
-<body>
-  <div class="wash" aria-hidden="true">
-    <span class="wash-a"></span>
-    <span class="wash-b"></span>
-    <span class="grain"></span>
+<body data-mood="top">
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <div id="boot" class="boot" role="status" aria-label="Loading">
+    <div class="boot-box">
+      <div class="boot-title">gigs.vault --mount</div>
+      <div id="boot-log" class="boot-log"></div>
+    </div>
   </div>
 
   <header class="hud">
-    <div class="hud-brand">
-      <p class="hud-mark">Gigs <span>vault</span></p>
-      <p class="hud-stats" id="stats" aria-live="polite">Loading recordings…</p>
-    </div>
-    <div class="hud-search">
-      <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
-        <path d="M16 16.5L20 20.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-      </svg>
-      <label class="visually-hidden" for="q">Search recordings</label>
-      <input id="q" type="search" placeholder="Search title, venue, notes" autocomplete="off" enterkeyhint="search">
-    </div>
-    <div class="hud-disk" id="disk" hidden>
-      <div class="disk-track" role="meter" id="disk-meter" aria-label="Disk used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-        <span id="disk-bar"></span>
-      </div>
-      <p id="disk-label"></p>
+    <a class="hud-brand" href="#top">gigs<span>.vault</span><i class="rec" id="hud-rec" aria-hidden="true"></i></a>
+    <nav class="hud-nav" aria-label="Sections">
+      <a href="#tour">Tour</a>
+      <a href="#theatre">Theatre</a>
+      <a href="#inbox">Inbox <b id="hud-inbox"></b></a>
+    </nav>
+    <div class="hud-meta" aria-hidden="true">
+      <span id="hud-uptime">up 00:00:00</span>
+      <span class="sep">·</span>
+      <span id="hud-now">idle</span>
+      <span class="sep">·</span>
+      <span id="hud-mood">sec: top</span>
     </div>
   </header>
 
-  <main class="shell">
-    <aside class="rail" id="rail" aria-label="Archive index">
-      <div class="views" id="views" role="group" aria-label="Archive views">
-        <button type="button" class="view" data-mode="all" aria-pressed="true">
-          <span class="view-name">Archive</span>
-        </button>
-        <button type="button" class="view" data-mode="untagged" aria-pressed="false">
-          <span class="view-name">Inbox</span>
-          <span class="view-count" id="inbox-count"></span>
-        </button>
-      </div>
-      <p class="inbox-note" id="inbox-note" hidden></p>
-      <div class="years" id="years" role="group" aria-label="Filter by year"></div>
-      <p class="status" id="status" hidden></p>
-      <ol class="timeline" id="list"></ol>
-      <footer class="keys" aria-label="Keyboard shortcuts">
-        <span><kbd>T</kbd> tag clip</span>
-        <span><kbd>↑</kbd><kbd>↓</kbd> browse</span>
-        <span><kbd>Esc</kbd> close</span>
-      </footer>
-    </aside>
-
-    <section class="screen" aria-label="Viewer">
-      <div class="stage" id="stage">
-        <p class="stage-empty" id="stage-empty">
-          <span class="stage-mark" aria-hidden="true"></span>
-          <span id="stage-copy">Select a recording.</span>
-        </p>
-        <video id="player" hidden controls playsinline preload="metadata"></video>
-        <p class="timecode" id="timecode" hidden>00:00</p>
-        <p class="fallback" id="fallback" hidden></p>
-      </div>
-
-      <article class="record" id="now" hidden>
-        <p class="record-kicker" id="now-kicker"></p>
-        <div class="record-head">
-          <h1 id="now-title"></h1>
-          <div class="record-actions">
-            <button type="button" class="btn-ghost" id="edit-toggle" aria-expanded="false" aria-controls="editor">Tag</button>
-            <a class="btn-ghost" id="download" href="" download>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 4v11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-                <path d="M7.5 11.5L12 16l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                <path d="M5 19h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-              </svg>
-              Save
-            </a>
+  <main>
+    <section class="hero" id="top" data-mood="top">
+      <canvas id="beams" class="beams" aria-hidden="true"></canvas>
+      <div class="hero-fallback" aria-hidden="true"></div>
+      <div class="hero-inner container">
+        <p class="kicker fade-up"><span class="dot"></span>Private archive · members only</p>
+        <h1 class="fade-up">GIG<br><span class="gradient">VAULT</span></h1>
+        <p class="lede fade-up">Every phone clip from every night — logged, tagged, and ready to screen. Pick a night from the tour history, or work the inbox until everything has a name.</p>
+        <dl class="statline fade-up">
+          <div class="stat"><dt>Clips logged</dt><dd class="stat-value" id="stat-clips" data-count="0">0</dd></div>
+          <div class="stat"><dt>Nights logged</dt><dd class="stat-value" id="stat-gigs" data-count="0">0</dd></div>
+          <div class="stat"><dt>Minutes of noise</dt><dd class="stat-value" id="stat-mins" data-count="0">0</dd></div>
+          <div class="stat"><dt>Awaiting tags</dt><dd class="stat-value warn" id="stat-untagged" data-count="0">0</dd></div>
+        </dl>
+        <div class="hero-search fade-up">
+          <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
+            <path d="M16 16.5L20 20.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+          <label class="visually-hidden" for="q">Search recordings</label>
+          <input id="q" type="search" placeholder="Search title, venue, notes — filters the tour below" autocomplete="off" enterkeyhint="search">
+        </div>
+        <div class="years fade-up" id="years" role="group" aria-label="Filter by year"></div>
+        <div class="console fade-up" id="console">
+          <div class="console-header">
+            <span class="console-dot red"></span>
+            <span class="console-dot yellow"></span>
+            <span class="console-dot green"></span>
+            <span class="console-title">vault:console</span>
+          </div>
+          <div class="console-body" id="console-out" aria-live="polite">
+            <div class="console-line">Vault console. Type <span class="hl">help</span> to see commands.</div>
+          </div>
+          <div class="console-input-line">
+            <span class="console-prompt">$</span>
+            <label class="visually-hidden" for="console-in">Vault console</label>
+            <input type="text" id="console-in" class="console-input" autocomplete="off" spellcheck="false" placeholder="Type a command...">
           </div>
         </div>
-        <p class="record-meta" id="now-meta"></p>
-        <p class="record-notes" id="now-notes" hidden></p>
-        <p class="up-next" id="up-next" hidden></p>
-        <form class="editor" id="editor" hidden>
-          <label class="wide">Title
-            <input id="edit-title" name="title" required maxlength="500" autocomplete="off">
-          </label>
-          <label>Date
-            <input id="edit-date" name="date" type="date">
-          </label>
-          <label>Venue
-            <input id="edit-venue" name="venue" maxlength="500" autocomplete="off">
-          </label>
-          <label class="wide">File name
-            <input id="edit-name" name="name" required maxlength="181" spellcheck="false" autocomplete="off">
-          </label>
-          <label class="wide">Notes
-            <textarea id="edit-notes" name="notes" maxlength="4000" rows="3"></textarea>
-          </label>
-          <p class="editor-error" id="editor-error" hidden></p>
-          <div class="editor-actions wide">
-            <button type="submit" id="edit-save">Save</button>
-            <button type="button" id="edit-cancel">Cancel</button>
+        <a href="#tour" class="scroll-hint" aria-label="Scroll to tour history">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+          Tour history
+        </a>
+      </div>
+    </section>
+
+    <section id="tour" class="section container" data-mood="tour">
+      <div class="section-header fade-up">
+        <p class="section-no">01</p>
+        <h2>Tour history</h2>
+        <p>Every night on record. Pick a poster to load the night into the theatre.</p>
+      </div>
+      <p class="status" id="tour-status" hidden></p>
+      <div class="gig-grid stagger" id="gig-grid"></div>
+    </section>
+
+    <section id="theatre" class="section container" data-mood="theatre">
+      <div class="section-header fade-up">
+        <p class="section-no">02</p>
+        <h2>Now screening</h2>
+        <p id="queue-title">The full vault, newest first.</p>
+      </div>
+      <div class="theatre-grid fade-up">
+        <div class="stage" id="stage">
+          <p class="stage-empty" id="stage-empty">
+            <span class="stage-mark" aria-hidden="true"></span>
+            <span id="stage-copy">Select a recording.</span>
+          </p>
+          <video id="player" hidden controls playsinline preload="metadata"></video>
+          <p class="timecode" id="timecode" hidden>00:00</p>
+          <p class="fallback" id="fallback" hidden></p>
+        </div>
+        <div class="side">
+          <article class="record" id="now" hidden>
+            <p class="record-kicker" id="now-kicker"></p>
+            <div class="record-head">
+              <h3 id="now-title"></h3>
+              <div class="record-actions">
+                <button type="button" class="btn-ghost" id="edit-toggle" aria-expanded="false" aria-controls="editor">Tag</button>
+                <a class="btn-ghost" id="download" href="" download>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 4v11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+                    <path d="M7.5 11.5L12 16l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M5 19h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+                  </svg>
+                  Save
+                </a>
+              </div>
+            </div>
+            <p class="record-meta" id="now-meta"></p>
+            <p class="record-notes" id="now-notes" hidden></p>
+            <form class="editor" id="editor" hidden>
+              <label class="wide">Title
+                <input id="edit-title" name="title" required maxlength="500" autocomplete="off">
+              </label>
+              <label>Date
+                <input id="edit-date" name="date" type="date">
+              </label>
+              <label>Venue
+                <input id="edit-venue" name="venue" maxlength="500" autocomplete="off">
+              </label>
+              <label class="wide">File name
+                <input id="edit-name" name="name" required maxlength="181" spellcheck="false" autocomplete="off">
+              </label>
+              <label class="wide">Notes
+                <textarea id="edit-notes" name="notes" maxlength="4000" rows="3"></textarea>
+              </label>
+              <p class="editor-error" id="editor-error" hidden></p>
+              <div class="editor-actions wide">
+                <button type="submit" id="edit-save">Save &amp; next</button>
+                <button type="button" id="edit-cancel">Cancel</button>
+              </div>
+            </form>
+          </article>
+          <div class="queue">
+            <h4>Screening queue</h4>
+            <ol id="queue-list"></ol>
           </div>
-        </form>
-      </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="inbox" class="section container" data-mood="inbox">
+      <div class="section-header fade-up">
+        <p class="section-no">03</p>
+        <h2>Inbox</h2>
+        <p>Fresh off the phone. Work the queue until everything has a name and a venue.</p>
+      </div>
+      <div class="inbox-progress fade-up">
+        <div class="progress-track" role="meter" id="inbox-meter" aria-label="Clips tagged" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <span id="inbox-bar"></span>
+        </div>
+        <p id="inbox-label"></p>
+      </div>
+      <p class="inbox-note" id="inbox-note" hidden></p>
+      <ol class="inbox-list" id="inbox-list"></ol>
+      <div class="inbox-actions fade-up">
+        <button type="button" class="btn-primary" id="inbox-screen">Screen the inbox</button>
+      </div>
     </section>
   </main>
 
+  <footer>
+    <div class="container footer-grid">
+      <div class="hud-disk" id="disk" hidden>
+        <div class="disk-track" role="meter" id="disk-meter" aria-label="Disk used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <span id="disk-bar"></span>
+        </div>
+        <p id="disk-label"></p>
+      </div>
+      <p class="foot-keys" aria-label="Keyboard shortcuts">
+        <span><kbd>T</kbd> tag</span>
+        <span><kbd>↑</kbd><kbd>↓</kbd> queue</span>
+        <span><kbd>Esc</kbd> close</span>
+      </p>
+      <p class="foot-note">Password protected. Catalog rebuilds from disk — dates fall back to file timestamps until tagged.</p>
+    </div>
+  </footer>
+
   <script src="/archive.js"></script>
+  <script src="/stage.js"></script>
 </body>
 </html>
