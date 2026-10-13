@@ -9,8 +9,8 @@
   --text-dim: #8a95a8;
   --brand: #4a9c6a;
   --brand-glow: rgba(74, 156, 106, 0.25);
-  --accent: #4a9c6a;
-  --accent-glow: rgba(74, 156, 106, 0.25);
+  --accent: #06b6d4;
+  --accent-glow: rgba(6, 182, 212, 0.25);
   --status-ok: #4a9c6a;
   --status-warn: #c99a3f;
   --warning: #c99a3f;
@@ -450,8 +450,35 @@ footer { padding: 40px 0; border-top: 1px solid var(--border); background: var(-
 .card { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
 .mt-2 { margin-top: 32px; }
 
-/* ===== Reduced Motion: Background Animations ===== */
+/* ===== 3D hero + motion system (redesign/3d-flows) ===== */
+.hero-3d { position: relative; overflow: clip; }
+.flow3d {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0; transition: opacity 1.2s ease;
+  mask-image: linear-gradient(to bottom, black 55%, transparent 98%);
+}
+body.has-3d .flow3d { opacity: 0.85; }
+.hero-3d .hero-content { position: relative; z-index: 1; }
+.hero-3d .terminal { background: color-mix(in srgb, var(--bg-elev) 82%, transparent); backdrop-filter: blur(14px); }
+.hero-fallback {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 45% at 70% 20%, rgba(74, 156, 106, 0.16), transparent 70%),
+    radial-gradient(ellipse 45% 40% at 20% 75%, rgba(6, 182, 212, 0.12), transparent 70%);
+}
+body.has-3d .hero-fallback { display: none; }
+.scroll-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 200;
+  background: linear-gradient(90deg, var(--brand), var(--accent));
+  transform: scaleX(0); transform-origin: left;
+}
+.tilt { transform-style: preserve-3d; will-change: transform; }
 @media (prefers-reduced-motion: reduce) {
+  .flow3d { display: none; }
+  .scroll-progress { display: none; }
+}
+
+/* ===== Reduced Motion: Background Animations ===== */@media (prefers-reduced-motion: reduce) {
   .bg-glow::before, .bg-glow::after {
     animation: none;
   }
