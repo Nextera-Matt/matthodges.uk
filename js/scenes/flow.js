@@ -14,7 +14,7 @@ export function createScene(THREE, ctx) {
     hot: new THREE.Color('#d9fbff'),
   };
 
-  const COUNT = coarse ? 1400 : 3200;
+  const COUNT = coarse ? 900 : 1900;
   const BOUNDS = { x: 11, y: 6.5, zMin: -7, zMax: 3 };
   const px = new Float32Array(COUNT);
   const py = new Float32Array(COUNT);
@@ -37,7 +37,7 @@ export function createScene(THREE, ctx) {
   const streakMat = new THREE.LineBasicMaterial({
     vertexColors: true,
     transparent: true,
-    opacity: 0.8,
+    opacity: 0.65,
     blending: THREE.AdditiveBlending,
     depthWrite: false,
   });
@@ -63,10 +63,10 @@ export function createScene(THREE, ctx) {
 
   const MOODS = {
     hero:     { camZ: 10.5, camY: 0.4, camX: 0, roll: 0, fov: 55, speed: 1.0, swirl: 1.0, dim: 0.9 },
-    focus:    { camZ: 8.0, camY: 0.1, camX: -0.8, roll: 0.03, fov: 58, speed: 0.8, swirl: 0.8, dim: 0.55 },
-    projects: { camZ: 6.0, camY: -0.3, camX: 0.6, roll: -0.04, fov: 64, speed: 1.7, swirl: 1.4, dim: 0.6 },
-    about:    { camZ: 8.5, camY: 0.3, camX: 1.0, roll: 0.05, fov: 56, speed: 0.9, swirl: 1.1, dim: 0.5 },
-    contact:  { camZ: 11.5, camY: 0.6, camX: 0, roll: 0, fov: 52, speed: 0.6, swirl: 0.7, dim: 0.7 },
+    focus:    { camZ: 8.0, camY: 0.1, camX: -0.8, roll: 0.03, fov: 58, speed: 0.8, swirl: 0.8, dim: 0.38 },
+    projects: { camZ: 6.0, camY: -0.3, camX: 0.6, roll: -0.04, fov: 64, speed: 1.7, swirl: 1.4, dim: 0.48 },
+    about:    { camZ: 8.5, camY: 0.3, camX: 1.0, roll: 0.05, fov: 56, speed: 0.9, swirl: 1.1, dim: 0.36 },
+    contact:  { camZ: 11.5, camY: 0.6, camX: 0, roll: 0, fov: 52, speed: 0.6, swirl: 0.7, dim: 0.42 },
   };
   let target = { ...MOODS.hero };
   const current = { ...MOODS.hero };
@@ -77,17 +77,24 @@ export function createScene(THREE, ctx) {
   }
 
   if (!reduced) {
-    const seen = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const mood = sectionFor(entry.target);
-        if (mood) {
-          target = { ...MOODS[mood] };
-          document.body.dataset.mood = mood;
-        }
+    const sections = [...document.querySelectorAll('main > section.hero, main section#focus, main section#projects, main section#about, main section#contact')];
+    // Mood follows whichever section sits under the viewport midpoint, so a
+    // tall hero cannot hold the HUD (or the camera) on "hero" while a later
+    // section is what is actually being read.
+    const pickMood = () => {
+      const mid = window.innerHeight / 2;
+      const currentEl = sections.find((el) => {
+        const rect = el.getBoundingClientRect();
+        return rect.top <= mid && rect.bottom >= mid;
       });
-    }, { threshold: 0.25, rootMargin: '-20% 0px -20% 0px' });
-    document.querySelectorAll('main > section.hero, main section#focus, main section#projects, main section#about, main section#contact').forEach((el) => seen.observe(el));
+      const mood = currentEl ? sectionFor(currentEl) : null;
+      if (mood && document.body.dataset.mood !== mood) {
+        target = { ...MOODS[mood] };
+        document.body.dataset.mood = mood;
+      }
+    };
+    window.addEventListener('scroll', pickMood, { passive: true });
+    pickMood();
   }
 
   let energy = 0;
@@ -217,7 +224,7 @@ export function createScene(THREE, ctx) {
       if (z > BOUNDS.zMax) z = BOUNDS.zMin; else if (z < BOUNDS.zMin) z = BOUNDS.zMax;
       px[i] = x; py[i] = y; pz[i] = z;
 
-      const streakLen = 0.12 + Math.min(1.4, v) * 0.55;
+      const streakLen = 0.25 + Math.min(1.6, v) * 0.9;
       const tx = x - (vx / mag) * streakLen;
       const ty = y - (vy / mag) * streakLen;
       const tz = z - (vz / mag) * streakLen;
