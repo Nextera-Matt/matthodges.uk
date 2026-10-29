@@ -554,3 +554,206 @@ body.has-3d .hero-fallback { display: none; }
     opacity: 1;
   }
 }
+
+/* ===== Section identities (per-section graphic treatments) ===== */
+
+/* Kickers + ghost numerals. */
+.section-kicker {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 10px;
+}
+#focus, #projects, #about, #contact { position: relative; }
+#focus::before, #projects::before, #about::before, #contact::before {
+  content: '00';
+  position: absolute;
+  top: 56px;
+  right: 8px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(84px, 12vw, 150px);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+  user-select: none;
+}
+#focus::before { content: '01'; }
+#projects::before { content: '02'; }
+#about::before { content: '03'; }
+#contact::before { content: '04'; }
+
+/* Focus: runbook steps with drawing icons. */
+.focus-card::after {
+  position: absolute;
+  top: 26px;
+  right: 26px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  opacity: 0.7;
+}
+.focus-card:nth-child(1)::after { content: 'step_01'; }
+.focus-card:nth-child(2)::after { content: 'step_02'; }
+.focus-card:nth-child(3)::after { content: 'step_03'; }
+
+/* Projects: deploy log. */
+.project-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 55%;
+  left: -70%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.13), transparent);
+  transform: skewX(-15deg);
+  transition: left 0.7s ease;
+  pointer-events: none;
+}
+.project-card:hover::after { left: 135%; }
+.deploy-chip {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid var(--border);
+  color: #fff;
+  backdrop-filter: blur(6px);
+}
+.deploy-chip.live { color: #7dffa8; border-color: rgba(40, 200, 64, 0.55); }
+
+/* About: skill proficiency meters. */
+.skill { --lvl: 0.5; padding-bottom: 15px; }
+.skill::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 7px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--brand), var(--accent));
+}
+.skill[data-level="expert"] { --lvl: 1; }
+.skill[data-level="advanced"] { --lvl: 0.72; }
+.skill[data-level="intermediate"] { --lvl: 0.45; }
+
+/* About: live incident feed cursor. */
+.code-block::after {
+  content: '▊';
+  color: var(--accent);
+  animation: blink 1s step-end infinite;
+}
+
+/* Marquee dividers. */
+.marquee {
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 11px 0;
+  margin: 24px 0;
+}
+.marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  opacity: 0.8;
+}
+
+/* Contact: open channel. */
+.channel-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-dim);
+  margin: 0 0 32px;
+}
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--status-ok);
+  box-shadow: 0 0 10px var(--status-ok);
+  animation: blink 1.6s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* Motion-gated: initial states + animations only with no-preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .focus-icon svg path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .stagger.visible .focus-card .focus-icon svg path { animation: drawStroke 0.9s ease forwards; }
+  .stagger.visible .focus-card:nth-child(1) .focus-icon svg path { animation-delay: 0.35s; }
+  .stagger.visible .focus-card:nth-child(2) .focus-icon svg path { animation-delay: 0.5s; }
+  .stagger.visible .focus-card:nth-child(3) .focus-icon svg path { animation-delay: 0.65s; }
+  .skill::after { transform: scaleX(0); transform-origin: left; }
+  .fade-up.visible .skill::after { transform: scaleX(var(--lvl)); transition: transform 1s ease; }
+  .fade-up.visible .skill:nth-child(1)::after, .fade-up.visible .skill:nth-child(2)::after, .fade-up.visible .skill:nth-child(3)::after { transition-delay: 0.5s; }
+  .fade-up.visible .skill:nth-child(4)::after, .fade-up.visible .skill:nth-child(5)::after, .fade-up.visible .skill:nth-child(6)::after { transition-delay: 0.7s; }
+  .fade-up.visible .skill:nth-child(n+7)::after { transition-delay: 0.9s; }
+  .marquee-track { animation: marquee 30s linear infinite; }
+}
+@keyframes drawStroke { to { stroke-dashoffset: 0; } }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+  .project-card::after { display: none; }
+  .code-block::after, .pulse-dot { animation: none; }
+}
+
+/* Contact: delivered state. */
+.contact-form .btn.sent {
+  background: var(--status-ok);
+  border-color: transparent;
+  pointer-events: none;
+}
+
+/* ===== Scene system chrome (per-page 3D identity) ===== */
+body[data-scene]::after {
+  position: fixed;
+  left: 14px;
+  bottom: 12px;
+  z-index: 90;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  background: color-mix(in srgb, var(--bg-elev) 72%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 11px;
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+  opacity: 0.75;
+}
+body[data-scene="flow"]::after { content: 'scene: flow'; }
+body[data-scene="rack"]::after { content: 'scene: rack'; }
+body[data-scene="rack"][data-tone="monitor"]::after { content: 'scene: rack · monitor'; }
+body[data-scene="rack"][data-tone="alert"]::after { content: 'scene: rack · alert'; }
+body[data-scene="rack"][data-tone="network"]::after { content: 'scene: rack · network'; }
+body[data-scene="rack"][data-tone="docs"]::after { content: 'scene: rack · docs'; }
+body[data-scene="rack"][data-tone="pipeline"]::after { content: 'scene: rack · pipeline'; }
+body[data-scene="console"]::after { content: 'scene: console'; }
+body[data-scene="runbook"]::after { content: 'scene: runbook'; }
+body[data-scene="timeline"]::after { content: 'scene: timeline'; }
+@media (max-width: 700px) {
+  body[data-scene]::after { display: none; }
+}
+@media print {
+  body[data-scene]::after, .flow3d { display: none !important; }
+}
