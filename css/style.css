@@ -597,9 +597,9 @@ body.has-3d .hero-fallback { display: none; }
   color: var(--text-dim);
   opacity: 0.7;
 }
-.focus-card:nth-child(1)::after { content: 'step_01'; }
-.focus-card:nth-child(2)::after { content: 'step_02'; }
-.focus-card:nth-child(3)::after { content: 'step_03'; }
+.focus-card:nth-child(1)::after { content: '01'; }
+.focus-card:nth-child(2)::after { content: '02'; }
+.focus-card:nth-child(3)::after { content: '03'; }
 
 /* Projects: deploy log. */
 .project-card::after {
