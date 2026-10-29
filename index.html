@@ -21,7 +21,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body data-scene="flow">
   <div class="bg-grid" aria-hidden="true"></div>
   <div class="bg-glow" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
@@ -116,27 +116,30 @@
 
     <section id="focus" class="container">
       <div class="section-header fade-up">
-        <h2>What I focus on</h2>
+        <div>
+          <p class="section-kicker">01 · runbook</p>
+          <h2>What I focus on</h2>
+        </div>
         <p>Clear outcomes over buzzwords.</p>
       </div>
       <div class="focus-grid stagger">
         <article class="focus-card">
           <div class="focus-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" pathLength="1"/></svg>
           </div>
           <h3>Reliability</h3>
           <p>Reduce incident noise and surprises with better monitoring, alerting, and runbooks that actually get used.</p>
         </article>
         <article class="focus-card">
           <div class="focus-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" pathLength="1"/></svg>
           </div>
           <h3>Automation</h3>
           <p>Remove toil with scripts and Ansible where it actually pays off. No automation for automation's sake.</p>
         </article>
         <article class="focus-card">
           <div class="focus-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" pathLength="1"/></svg>
           </div>
           <h3>Pragmatism</h3>
           <p>Simple, auditable changes that teams can own and maintain. Solutions that outlast my involvement.</p>
@@ -144,9 +147,18 @@
       </div>
     </section>
 
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>reliability · automation · pragmatism ·&nbsp;</span><span>reliability · automation · pragmatism ·&nbsp;</span>
+      </div>
+    </div>
+
     <section id="projects" class="container">
       <div class="section-header fade-up">
-        <h2>Production Systems</h2>
+        <div>
+          <p class="section-kicker">02 · deploy-log</p>
+          <h2>Production Systems</h2>
+        </div>
         <p>Systems I built and ran in production at THG Ingenuity.</p>
       </div>
       
@@ -155,6 +167,7 @@
           <a href="/projects/support-dashboard" class="project-card">
           <div class="project-thumb">
             <img src="/images/dashboard/dashboard-tickets-row.png" alt="Support dashboard ticket queue" loading="lazy">
+            <span class="deploy-chip live">● live</span>
           </div>
           <div class="project-body">
             <div class="project-title">
@@ -173,6 +186,7 @@
         <a href="/projects/vip-alerting" class="project-card">
           <div class="project-thumb" style="background: linear-gradient(135deg, #f59e0b, var(--brand)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
             VIP Alerting
+            <span class="deploy-chip">● prod</span>
           </div>
           <div class="project-body">
             <div class="project-title">
@@ -191,6 +205,7 @@
         <a href="/projects/zabbix-automation" class="project-card">
           <div class="project-thumb" style="background: linear-gradient(135deg, var(--accent), #06b6d4); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
             Zabbix Automation
+            <span class="deploy-chip">● prod</span>
           </div>
           <div class="project-body">
             <div class="project-title">
@@ -209,6 +224,7 @@
         <a href="/projects/documentation" class="project-card">
           <div class="project-thumb" style="background: linear-gradient(135deg, #8b5cf6, var(--brand)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
             Documentation
+            <span class="deploy-chip">● shipped</span>
           </div>
           <div class="project-body">
             <div class="project-title">
@@ -236,6 +252,7 @@
     <section id="about" class="container">
       <div class="about-grid">
         <div class="about-content fade-up">
+          <p class="section-kicker">03 · system-info</p>
           <h2>About me</h2>
           <p>I'm a Systems Administrator at Fixter. Day to day that's new starter and leaver processing, managing our device fleet across six countries, provisioning and locking down access to internal systems and databases, and staying on top of GDPR requests and security reviews. Over the next year I'm moving into more of the DevOps side — automation, infrastructure, the stuff engineering owns.</p>
           <p>Before this, six years at THG Ingenuity — started as an infrastructure apprentice, worked up through Hosting Support Engineer to Cloud & Infrastructure Engineer, providing L3 support and building the internal tooling the engineering team relied on daily.</p>
@@ -284,12 +301,20 @@
       </div>
     </section>
 
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>open a channel · say hello · humans welcome ·&nbsp;</span><span>open a channel · say hello · humans welcome ·&nbsp;</span>
+      </div>
+    </div>
+
     <section id="contact">
       <div class="container">
         <div class="contact-grid">
           <div class="contact-info fade-up">
+            <p class="section-kicker">04 · uplink</p>
             <h2>Get in touch</h2>
             <p>Have a question about my work, want to discuss infrastructure, or just want to say hello? Drop me a message.</p>
+            <p class="channel-status"><span class="pulse-dot" aria-hidden="true"></span>channel open — messages land directly with me</p>
             <div class="contact-links">
               <a href="mailto:contact@matthodges.uk" class="contact-link">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
